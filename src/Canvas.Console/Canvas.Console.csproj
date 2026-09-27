@@ -5,6 +5,7 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<UserSecretsId>14370ef5-b154-4f80-85fa-9d71eaacd197</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -12,15 +13,20 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Canvas.Client\Canvas.Client.csproj" />
 		<ProjectReference Include="..\Canvas.Generator\Canvas.Generator.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="appsettings.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="canvas - Copy.yaml">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
