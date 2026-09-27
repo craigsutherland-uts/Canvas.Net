@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Canvas.Console/Canvas.Console.csproj" Id="11a0dcc6-ec06-4564-9573-f7b51527c825" />
+  <Project Path="Canvas.Generator/Canvas.Generator.csproj" Id="1b43ee70-0e6b-4af6-89ee-7eae194554e4" />
+</Solution>
