@@ -3,9 +3,6 @@
 /// <summary>
 /// A general error has occurred in the <see cref="ICanvasConnection"/>.
 /// </summary>
-/// <remarks>
-/// Initialize a new <see cref="ConnectionException"/> instance.
-/// </remarks>
 /// <param name="url">The URL called.</param>
 /// <param name="message">The message.</param>
 /// <param name="innerException">An inner <see cref="Exception"/> instance.</param>

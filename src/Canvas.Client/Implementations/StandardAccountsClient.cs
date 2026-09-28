@@ -1,4 +1,5 @@
-﻿using Canvas.Client.Entities;
+﻿using Canvas.Client.Dtos;
+using Canvas.Client.Entities;
 using Canvas.Client.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
@@ -13,11 +14,23 @@ namespace Canvas.Client.Implementations;
 /// <param name="options">The <see cref="ICanvasOptions"/> to use when connecting to Canvas.</param>
 [CanvasClient<IAccounts>]
 public sealed class StandardAccountsClient(
-        ICanvasConnection connection, 
+        ICanvasConnection connection,
         ILogger<StandardAccountsClient> logger,
         ICanvasOptions options)
     : IAccounts
 {
+    /// <summary>
+    /// Starts a new <see cref="Account"/> instance.
+    /// </summary>
+    /// <returns>A new <see cref="Account"/> instance.</returns>
+    public Account New()
+    {
+        return new Account(this)
+        {
+            Id = AccountIdentifier.None,
+        };
+    }
+
     /// <summary>
     /// Retrieves an account.
     /// </summary>
@@ -27,10 +40,11 @@ public sealed class StandardAccountsClient(
     public async Task<Account?> Retrieve(AccountIdentifier identifier, CancellationToken cancellationToken)
     {
         logger.LogDebug("Retrieving account with id {id}", identifier);
-        return await connection.GetEntity<Account>(
+        var dto = await connection.GetEntity<AccountDto>(
                 string.Create(CultureInfo.InvariantCulture, $"/api/v1/accounts/{identifier}"),
                 options,
                 cancellationToken)
             .ConfigureAwait(false);
+        return Account.From(this, dto);
     }
 }

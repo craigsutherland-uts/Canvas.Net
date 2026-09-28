@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Xml.Linq;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Canvas.Generator;
@@ -41,24 +42,35 @@ public sealed class Engine
     {
         EnsureInitialised();
 
-        // Ensure the root path exists
+        // Ensure the folders exist
         var fullPath = Path.IsPathFullyQualified(rootPath)
             ? rootPath
             : Path.Combine(Environment.CurrentDirectory, rootPath);
-        if (!Directory.Exists(fullPath))
-        {
-            Logger?.LogInformation("Adding folder {path}", fullPath);
-            Directory.CreateDirectory(fullPath);
-        }
+        EnsureFolderExists(Path.Combine(fullPath, "Entities"));
+        EnsureFolderExists(Path.Combine(fullPath, "Dtos"));
 
         // Generate each entity
         foreach (var component in _definition.Components.Schemas)
         {
             await GenerateEntity(
-                    fullPath,
+                    Path.Combine(fullPath, "Entities"),
                     component,
                     cancellationToken)
                 .ConfigureAwait(false);
+            await GenerateDto(
+                    Path.Combine(fullPath, "Dtos"),
+                    component,
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+    }
+
+    private void EnsureFolderExists(string fullPath)
+    {
+        if (!Directory.Exists(fullPath))
+        {
+            Logger?.LogInformation("Adding folder {path}", fullPath);
+            Directory.CreateDirectory(fullPath);
         }
     }
 
@@ -72,21 +84,29 @@ public sealed class Engine
         Logger?.LogInformation("Generating entity {name}", className);
         var schema = component.Value;
 
-        // Start the record definition
-        var recordDef = GenerateRecordDefinition(className);
+        // Start the record definitions
+        var entityDef = GenerateRecordDefinition(className, $"The {className.Humanize()} entity definition.", SyntaxKind.PublicKeyword);
 
         // Add each property
-        var properties = new List<MemberDeclarationSyntax>();
+        var members = new List<MemberDeclarationSyntax>();
+        var propertyNames = new List<string>();
         foreach (var property in schema.Properties)
         {
-            properties.Add(GenerateProperty(property));
+            members.Add(GenerateProperty(property, true, false));
+            propertyNames.Add(property.Key.Dehumanize());
         }
+
+        // Add the From method
+        members.Add(GenerateFromDtoMethod(className, propertyNames));
 
         // Generate the compilation and add the usings, namespace, and record
         var compilation = GenerateCompilationUnit(
-            recordDef
-                .WithMembers(List(properties))
-                .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken)));
+            entityDef
+                .WithMembers(List(members))
+                .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken)),
+            QualifiedName(
+                IdentifierName("System"),
+                IdentifierName("Diagnostics")));
 
         // Save the completed entity
         var outputPath = Path.Combine(rootPath, className + ".cs");
@@ -100,7 +120,99 @@ public sealed class Engine
             .ConfigureAwait(false);
     }
 
-    private PropertyDeclarationSyntax GenerateProperty(KeyValuePair<string, OpenApiSchema> property)
+    private static MemberDeclarationSyntax GenerateFromDtoMethod(
+        string className,
+        List<string> propertyNames)
+    {
+        var dtoName = $"{className}Dto";
+        var transferExpressions = propertyNames.SelectMany(pn => new SyntaxNodeOrToken[]{
+            AssignmentExpression(
+                SyntaxKind.SimpleAssignmentExpression,
+                IdentifierName(pn),
+                MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    IdentifierName("dto"),
+                    IdentifierName(pn))),
+            Token(SyntaxKind.CommaToken),
+        });
+        var method = MethodDeclaration(
+                    IdentifierName("className"),
+                    Identifier("From"))
+                .WithModifiers(
+                    TokenList(
+                        [Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.StaticKeyword)]))
+                .WithParameterList(
+                    ParameterList(
+                        SingletonSeparatedList(
+                            Parameter(
+                                Identifier("dto"))
+                            .WithType(
+                                IdentifierName(dtoName)))))
+                .WithBody(
+                    Block(
+                        SingletonList<StatementSyntax>(
+                            ReturnStatement(
+                                ObjectCreationExpression(
+                                    IdentifierName(dtoName))
+                                .WithInitializer(
+                                    InitializerExpression(
+                                        SyntaxKind.ObjectInitializerExpression,
+                                        SeparatedList<ExpressionSyntax>(
+                                            transferExpressions))))
+                            .WithSemicolonToken(
+                                MissingToken(SyntaxKind.SemicolonToken)))));
+        return method;
+    }
+
+    private async Task GenerateDto(
+        string rootPath,
+        KeyValuePair<string, OpenApiSchema> component,
+        CancellationToken cancellationToken)
+    {
+        // Retrieve the entity name
+        var className = $"{component.Key}Dto";
+        Logger?.LogInformation("Generating DTO {name}", className);
+        var schema = component.Value;
+
+        // Start the record definitions
+        var dtoDef = GenerateRecordDefinition(className, $"A DTO for transferring {component.Key.Humanize()} entities.", SyntaxKind.InternalKeyword);
+
+        // Add each property
+        var properties = new List<MemberDeclarationSyntax>();
+        foreach (var property in schema.Properties)
+        {
+            properties.Add(GenerateProperty(property, false, true));
+        }
+
+        // Generate the compilation and add the usings, namespace, and record
+        var compilation = GenerateCompilationUnit(
+            dtoDef
+                .WithMembers(List(properties))
+                .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken)),
+            QualifiedName(
+                QualifiedName(
+                    QualifiedName(
+                        IdentifierName("System"),
+                        IdentifierName("Text")),
+                    IdentifierName("Json")),
+                IdentifierName("Serialization")));
+
+        // Save the completed entity
+        var outputPath = Path.Combine(rootPath, className + ".cs");
+        var streamWriter = new StreamWriter(outputPath, append: false);
+        await using var _ = streamWriter.ConfigureAwait(false);
+        compilation
+            .NormalizeWhitespace()
+            .WriteTo(streamWriter);
+        Logger?.LogInformation("Entity definition {className} saved to {path}", className, outputPath);
+        await streamWriter.FlushAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private PropertyDeclarationSyntax GenerateProperty(
+        KeyValuePair<string, OpenApiSchema> property,
+        bool includeDocComments,
+        bool includeJsonName)
     {
         var propertyName = property.Key.Dehumanize();
         Logger?.LogInformation(
@@ -110,24 +222,30 @@ public sealed class Engine
             property.Value.Type);
 
         var type = GenerateType(property.Key, property.Value);
-        var xmlDoc = new List<SyntaxTrivia>();
-        var hasNewLine = false;
-        var exampleValue = RetrieveExampleValue(property.Value.Example);
-        if (!string.IsNullOrEmpty(exampleValue))
+
+        var docComments = TriviaList();
+        if (includeDocComments)
         {
-            xmlDoc.Insert(0, GenerateXmlDoc("example", exampleValue, !hasNewLine));
-            hasNewLine = true;
-        }
-        if (!string.IsNullOrEmpty(property.Value.Description))
-        {
-            xmlDoc.Insert(0, GenerateXmlDoc("summary", property.Value.Description, !hasNewLine));
+            var xmlDoc = new List<SyntaxTrivia>();
+            var hasNewLine = false;
+            var exampleValue = RetrieveExampleValue(property.Value.Example);
+            if (!string.IsNullOrEmpty(exampleValue))
+            {
+                xmlDoc.Insert(0, GenerateXmlDoc("example", exampleValue, !hasNewLine));
+                hasNewLine = true;
+            }
+            if (!string.IsNullOrEmpty(property.Value.Description))
+            {
+                xmlDoc.Insert(0, GenerateXmlDoc("summary", property.Value.Description, !hasNewLine));
+            }
+            docComments = TriviaList(xmlDoc);
         }
 
         var definition = PropertyDeclaration(
                     NullableType(type),
                     Identifier(propertyName))
                 .WithModifiers(
-                    TokenList(Token(TriviaList(xmlDoc), SyntaxKind.PublicKeyword, TriviaList())))
+                    TokenList(Token(docComments, SyntaxKind.PublicKeyword, TriviaList())))
                 .WithAccessorList(
                     AccessorList(
                         List(
@@ -137,6 +255,21 @@ public sealed class Engine
                                 AccessorDeclaration(SyntaxKind.InitAccessorDeclaration)
                                     .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
                             ])));
+        if (includeJsonName && !string.Equals(propertyName, property.Key, StringComparison.OrdinalIgnoreCase))
+        {
+            definition = definition.WithAttributeLists(SingletonList(
+                        AttributeList(
+                            SingletonSeparatedList(
+                                Attribute(
+                                    IdentifierName("JsonPropertyName"))
+                                .WithArgumentList(
+                                    AttributeArgumentList(
+                                        SingletonSeparatedList(
+                                            AttributeArgument(
+                                                LiteralExpression(
+                                                    SyntaxKind.StringLiteralExpression,
+                                                    Literal(property.Key))))))))));
+        }
         return definition;
     }
 
@@ -193,25 +326,13 @@ public sealed class Engine
                     SingletonSeparatedList(itemType)));
     }
 
-    private CompilationUnitSyntax GenerateCompilationUnit(RecordDeclarationSyntax recordDef)
+    private CompilationUnitSyntax GenerateCompilationUnit(
+        RecordDeclarationSyntax recordDef,
+        params QualifiedNameSyntax[] namespacesToUse)
     {
         return CompilationUnit()
             .WithUsings(
-                List(
-                    [
-                        UsingDirective(
-                            QualifiedName(
-                                IdentifierName("System"),
-                                IdentifierName("Diagnostics"))),
-                        UsingDirective(
-                            QualifiedName(
-                                QualifiedName(
-                                    QualifiedName(
-                                        IdentifierName("System"),
-                                        IdentifierName("Text")),
-                                    IdentifierName("Json")),
-                                IdentifierName("Serialization"))),
-                    ]))
+                List(namespacesToUse.Select(UsingDirective)))
             .WithMembers(
                 SingletonList<MemberDeclarationSyntax>(
                     FileScopedNamespaceDeclaration(
@@ -222,7 +343,10 @@ public sealed class Engine
                         SingletonList<MemberDeclarationSyntax>(recordDef))));
     }
 
-    private static RecordDeclarationSyntax GenerateRecordDefinition(string name)
+    private static RecordDeclarationSyntax GenerateRecordDefinition(
+        string name,
+        string summary,
+        SyntaxKind accessLevel)
     {
         return RecordDeclaration(
                 SyntaxKind.RecordDeclaration,
@@ -231,8 +355,8 @@ public sealed class Engine
             .WithModifiers(
                 TokenList(
                     Token(
-                        TriviaList(GenerateXmlDoc("summary", $"The {name.Humanize()} entity definition.", true)),
-                        SyntaxKind.PublicKeyword,
+                        TriviaList(GenerateXmlDoc("summary", summary, true)),
+                        accessLevel,
                         TriviaList()),
                     Token(SyntaxKind.SealedKeyword),
                     Token(SyntaxKind.PartialKeyword)

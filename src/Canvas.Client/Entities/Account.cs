@@ -1,10 +1,23 @@
-﻿namespace Canvas.Client.Entities;
+﻿using Canvas.Client.Dtos;
+using Canvas.Client.Interfaces;
+using Canvas.Client.Internal;
+using System.Diagnostics;
+
+namespace Canvas.Client.Entities;
 
 /// <summary>
 /// The Account entity definition.
 /// </summary>
+[DebuggerDisplay($"{{{nameof(Name)}}} [{{{nameof(Id)}.ToString()}}]")]
 public sealed partial record Account
 {
+    private AccountDto? _source;
+
+    /// <summary>
+    /// A flag indicating whether the Account is new or retrieved from Canvas.
+    /// </summary>
+    public bool IsNew => _source == null;
+
     /// <summary>
     /// The storage quota for a group in the account in megabytes, if not otherwise specified
     /// </summary> 
@@ -103,4 +116,33 @@ public sealed partial record Account
     /// "active"
     /// </example>
     public string? WorkflowState { get; init; }
+
+    /// <summary>
+    /// Generate a new <see cref="Account"/> instance from an <see cref="AccountDto"/> instance.
+    /// </summary>
+    /// <param name="accountsClient">The <see cref="IAccounts"/> instance that is initialising this account.</param>
+    /// <param name="dto">The <see cref="AccountDto"/> instance.</param>
+    /// <returns>A new <see cref="Account"/> instance.</returns>
+    internal static Account? From(IAccounts accountsClient, AccountDto? dto)
+    {
+        if (dto == null) return null;
+        return new Account(accountsClient)
+        {
+            _source = dto,
+            DefaultGroupStorageQuotaMb = dto.DefaultGroupStorageQuotaMb,
+            DefaultStorageQuotaMb = dto.DefaultStorageQuotaMb,
+            DefaultTimeZone = dto.DefaultTimeZone,
+            DefaultUserStorageQuotaMb = dto.DefaultUserStorageQuotaMb,
+            Id = AccountIdentifier.From(dto.Id!),
+            IntegrationId = dto.IntegrationId,
+            LtiGuid = dto.LtiGuid,
+            Name = dto.Name,
+            ParentAccountId = AccountIdentifier.FromNullable(dto.ParentAccountId),
+            RootAccountId = AccountIdentifier.FromNullable(dto.RootAccountId),
+            SisAccountId = dto.SisAccountId,
+            SisImportId = dto.SisImportId,
+            Uuid = dto.Uuid,
+            WorkflowState = dto.WorkflowState,
+        };
+    }
 }

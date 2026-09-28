@@ -8,6 +8,12 @@ namespace Canvas.Client.Interfaces;
 public interface IAccounts
 {
     /// <summary>
+    /// Starts a new <see cref="Account"/> instance.
+    /// </summary>
+    /// <returns>A new <see cref="Account"/> instance.</returns>
+    Account New();
+
+    /// <summary>
     /// Retrieves an account.
     /// </summary>
     /// <param name="identifier">The identifier of the account.</param>
