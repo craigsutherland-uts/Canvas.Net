@@ -1,29 +1,33 @@
 ﻿using Canvas.Client.Dtos;
 using Canvas.Client.Interfaces;
 using Canvas.Client.Internal;
-using System.Diagnostics;
+using CommunityToolkit.Diagnostics;
 
 namespace Canvas.Client.Entities;
-
 /// <summary>
 /// The Account entity definition.
 /// </summary>
-[DebuggerDisplay($"{{{nameof(Name)}}} [{{{nameof(Id)}.ToString()}}]")]
 public sealed partial record Account
 {
     private AccountDto? _source;
+    private readonly IAccounts _client;
+    internal Account(IAccounts client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
 
     /// <summary>
     /// A flag indicating whether the Account is new or retrieved from Canvas.
     /// </summary>
     public bool IsNew => _source == null;
-
     /// <summary>
     /// The storage quota for a group in the account in megabytes, if not otherwise specified
     /// </summary> 
-    /// <example>50</example>
+    /// <example>
+    /// 50
+    /// </example>
     public int? DefaultGroupStorageQuotaMb { get; init; }
-
     /// <summary>
     /// The storage quota for the account in megabytes, if not otherwise specified
     /// </summary> 
@@ -31,27 +35,27 @@ public sealed partial record Account
     /// 500
     /// </example>
     public int? DefaultStorageQuotaMb { get; init; }
-
     /// <summary>
-    /// The default time zone of the account. Allowed time zones are {http://www.iana.org/time-zones IANA time
-    /// zones} or friendlier {http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html Ruby on Rails time 
-    /// zones}.
+    /// The default time zone of the account. Allowed time zones are {http://www.iana.org/time-zones IANA time zones} or friendlier {http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html Ruby on Rails time zones}.
     /// </summary> 
-    /// <example>"America/Denver"</example>
+    /// <example>
+    /// "America/Denver"
+    /// </example>
     public string? DefaultTimeZone { get; init; }
-
     /// <summary>
     /// The storage quota for a user in the account in megabytes, if not otherwise specified
     /// </summary> 
-    /// <example>50</example>
+    /// <example>
+    /// 50
+    /// </example>
     public int? DefaultUserStorageQuotaMb { get; init; }
-
     /// <summary>
     /// the ID of the Account object
     /// </summary> 
-    /// <example>2</example>
-    public required AccountIdentifier Id { get; init; }
-
+    /// <example>
+    /// 2
+    /// </example>
+    public AccountIdentifier Id { get; init; }
     /// <summary>
     /// The account's identifier in the Student Information System. Only included if the user has permission to view SIS information.
     /// </summary> 
@@ -59,7 +63,6 @@ public sealed partial record Account
     /// "123xyz"
     /// </example>
     public string? IntegrationId { get; init; }
-
     /// <summary>
     /// The account's identifier that is sent as context_id in LTI launches.
     /// </summary> 
@@ -117,23 +120,17 @@ public sealed partial record Account
     /// </example>
     public string? WorkflowState { get; init; }
 
-    /// <summary>
-    /// Generate a new <see cref="Account"/> instance from an <see cref="AccountDto"/> instance.
-    /// </summary>
-    /// <param name="accountsClient">The <see cref="IAccounts"/> instance that is initialising this account.</param>
-    /// <param name="dto">The <see cref="AccountDto"/> instance.</param>
-    /// <returns>A new <see cref="Account"/> instance.</returns>
-    internal static Account? From(IAccounts accountsClient, AccountDto? dto)
+    internal static Account? From(IAccounts client, AccountDto? dto)
     {
-        if (dto == null) return null;
-        return new Account(accountsClient)
+        if (dto == null)
+            return null;
+        return new Account(client)
         {
-            _source = dto,
             DefaultGroupStorageQuotaMb = dto.DefaultGroupStorageQuotaMb,
             DefaultStorageQuotaMb = dto.DefaultStorageQuotaMb,
             DefaultTimeZone = dto.DefaultTimeZone,
             DefaultUserStorageQuotaMb = dto.DefaultUserStorageQuotaMb,
-            Id = AccountIdentifier.From(dto.Id!),
+            Id = dto.Id == null ? AccountIdentifier.None : AccountIdentifier.From(dto.Id),
             IntegrationId = dto.IntegrationId,
             LtiGuid = dto.LtiGuid,
             Name = dto.Name,
@@ -143,6 +140,7 @@ public sealed partial record Account
             SisImportId = dto.SisImportId,
             Uuid = dto.Uuid,
             WorkflowState = dto.WorkflowState,
+            _source = dto,
         };
     }
 }

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Diagnostics;
+﻿using Canvas.Generator.Models;
+using CommunityToolkit.Diagnostics;
 using Humanizer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -7,9 +8,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
+using SharpYaml.Serialization;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Xml.Linq;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Canvas.Generator;
@@ -19,7 +20,9 @@ namespace Canvas.Generator;
 /// </summary>
 public sealed class Engine
 {
-    private OpenApiDocument? _definition;
+    private Api? _api;
+
+    private OpenApiDocument? _schema;
 
     /// <summary>
     /// An associated logger.
@@ -29,7 +32,7 @@ public sealed class Engine
     /// <summary>
     /// The root namespace for generating entities.
     /// </summary>
-    public string RootNamespace { get; set; } = "Canvas";
+    public string RootNamespace { get; set; } = "Canvas.Client";
 
     /// <summary>
     /// Generates the code files to encapsulate the entities.
@@ -50,11 +53,14 @@ public sealed class Engine
         EnsureFolderExists(Path.Combine(fullPath, "Dtos"));
 
         // Generate each entity
-        foreach (var component in _definition.Components.Schemas)
+        var entities = _api.Entities.ToDictionary(e => e.Name, StringComparer.Ordinal);
+        foreach (var component in _schema.Components.Schemas)
         {
+            if (!entities.TryGetValue(component.Key, out var entity)) continue;
             await GenerateEntity(
                     Path.Combine(fullPath, "Entities"),
                     component,
+                    entity,
                     cancellationToken)
                 .ConfigureAwait(false);
             await GenerateDto(
@@ -77,6 +83,7 @@ public sealed class Engine
     private async Task GenerateEntity(
         string rootPath,
         KeyValuePair<string, OpenApiSchema> component,
+        Entity apiDefinition,
         CancellationToken cancellationToken)
     {
         // Retrieve the entity name
@@ -87,17 +94,36 @@ public sealed class Engine
         // Start the record definitions
         var entityDef = GenerateRecordDefinition(className, $"The {className.Humanize()} entity definition.", SyntaxKind.PublicKeyword);
 
+        // Add the constructor
+        var members = new List<MemberDeclarationSyntax>
+        {
+            GenerateField(IdentifierName($"{className}Dto"), "_source", false, true),
+        };
+
+        if (!string.IsNullOrEmpty(apiDefinition.Client))
+        {
+            members.AddRange(
+                GenerateField(IdentifierName(apiDefinition.Client), "_client", true, false),
+                GenerateConstructor(className, apiDefinition.Client));
+        }
+        members.Add(GenerateIsNewProperty(className));
+
         // Add each property
-        var members = new List<MemberDeclarationSyntax>();
-        var propertyNames = new List<string>();
+        var propertiesByJsonName = apiDefinition.Properties.ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
+        var propertiesByCSharpName = apiDefinition.Properties.ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
+        var propertyNames = new Dictionary<string, EntityProperty?>(StringComparer.Ordinal);
         foreach (var property in schema.Properties)
         {
-            members.Add(GenerateProperty(property, true, false));
-            propertyNames.Add(property.Key.Dehumanize());
+            if (!propertiesByJsonName.TryGetValue(property.Key, out var propertyDefinition))
+            {
+                propertiesByCSharpName.TryGetValue(property.Key.Dehumanize(), out propertyDefinition);
+            }
+            members.Add(GenerateProperty(property, propertyDefinition, true, false));
+            propertyNames.Add(property.Key.Dehumanize(), propertyDefinition);
         }
 
         // Add the From method
-        members.Add(GenerateFromDtoMethod(className, propertyNames));
+        members.Add(GenerateFromDtoMethod(className, apiDefinition.Client, propertyNames));
 
         // Generate the compilation and add the usings, namespace, and record
         var compilation = GenerateCompilationUnit(
@@ -120,48 +146,235 @@ public sealed class Engine
             .ConfigureAwait(false);
     }
 
+    private static MemberDeclarationSyntax GenerateIsNewProperty(string className)
+    {
+        return PropertyDeclaration(
+                    PredefinedType(Token(SyntaxKind.BoolKeyword)),
+                    Identifier("IsNew"))
+                .WithModifiers(
+                    TokenList(
+                        Token(
+                            TriviaList(
+                                Trivia(
+                                    DocumentationCommentTrivia(
+                                        SyntaxKind.SingleLineDocumentationCommentTrivia,
+                                        List<XmlNodeSyntax>(
+                                            [
+                                                XmlText()
+                                                .WithTextTokens(
+                                                    TokenList(
+                                                        XmlTextLiteral(
+                                                            TriviaList(DocumentationCommentExterior("///")), " ", " ", TriviaList()))),
+                                                XmlExampleElement(
+                                                    SingletonList<XmlNodeSyntax>(
+                                                        XmlText()
+                                                        .WithTextTokens(
+                                                            TokenList(
+                                                                [
+                                                                    XmlTextNewLine(TriviaList(), Environment.NewLine, Environment.NewLine, TriviaList()),
+                                                                    XmlTextLiteral(
+                                                                        TriviaList(
+                                                                            DocumentationCommentExterior("    ///")),
+                                                                        $" A flag indicating whether the {className} is new or retrieved from Canvas.",
+                                                                        $" A flag indicating whether the {className} is new or retrieved from Canvas.",
+                                                                        TriviaList()),
+                                                                    XmlTextNewLine(TriviaList(), Environment.NewLine, Environment.NewLine, TriviaList()),
+                                                                    XmlTextLiteral(
+                                                                        TriviaList(
+                                                                            DocumentationCommentExterior("    ///")),
+                                                                        " ",
+                                                                        " ",
+                                                                        TriviaList())]))))
+                                                .WithStartTag(XmlElementStartTag(XmlName(Identifier("summary"))))
+                                                .WithEndTag(XmlElementEndTag(XmlName(Identifier("summary")))),
+                                                XmlText()
+                                                .WithTextTokens(
+                                                    TokenList(
+                                                        XmlTextNewLine(TriviaList(), Environment.NewLine, Environment.NewLine, TriviaList())))])))),
+                            SyntaxKind.PublicKeyword,
+                            TriviaList())))
+                .WithExpressionBody(
+                    ArrowExpressionClause(
+                        BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            IdentifierName("_source"),
+                            LiteralExpression(SyntaxKind.NullLiteralExpression))))
+                .WithSemicolonToken(
+                    Token(SyntaxKind.SemicolonToken));
+    }
+
+    private static MemberDeclarationSyntax GenerateField(
+        IdentifierNameSyntax variableType,
+        string variableName,
+        bool isReadOnly,
+        bool isNullable)
+    {
+        var tokens = new List<SyntaxToken> { Token(SyntaxKind.PrivateKeyword) };
+        if (isReadOnly) tokens.Add(Token(SyntaxKind.ReadOnlyKeyword));
+        var variable = isNullable
+            ? VariableDeclaration(NullableType(variableType))
+            : VariableDeclaration(variableType);
+        return FieldDeclaration(
+                        variable
+                        .WithVariables(
+                            SingletonSeparatedList(
+                                VariableDeclarator(
+                                    Identifier(variableName)))))
+                    .WithModifiers(TokenList(tokens));
+    }
+
+    private async Task LoadApiDefinition(string apiPath, CancellationToken cancellationToken)
+    {
+        Guard.IsNotNullOrWhiteSpace(apiPath);
+
+        // Check that the file exists
+        var fullPath = Path.IsPathFullyQualified(apiPath)
+            ? apiPath
+            : Path.Combine(Environment.CurrentDirectory, apiPath);
+        if (!File.Exists(fullPath))
+        {
+            throw new GeneratorException($"Unable to read '{fullPath}': unable to find file");
+        }
+
+        // Import the definition
+        Logger?.LogInformation("Loading API definition from {path}", fullPath);
+        var stream = new FileStream(
+            apiPath,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read,
+            4096,
+            useAsync: true);
+        await using var _ = stream.ConfigureAwait(false);
+        var settings = new SerializerSettings
+        {
+            NamingConvention = new CamelCaseNamingConvention(),
+        };
+        _api = new Serializer(settings).Deserialize<Api>(stream)
+            ?? throw new GeneratorException($"Unable to read '{fullPath}': could not deserialize");
+    }
+
+    private static MemberDeclarationSyntax GenerateConstructor(string className, string clientName)
+    {
+        return ConstructorDeclaration(
+                    Identifier(className))
+                .WithModifiers(
+                    TokenList(
+                        Token(SyntaxKind.InternalKeyword)))
+                .WithParameterList(
+                    ParameterList(
+                        SingletonSeparatedList(
+                            Parameter(
+                                Identifier("client"))
+                            .WithType(
+                                IdentifierName(clientName)))))
+                .WithBody(
+                    Block(
+                        ExpressionStatement(
+                            InvocationExpression(
+                                MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    IdentifierName("Guard"),
+                                    IdentifierName("IsNotNull")))
+                            .WithArgumentList(
+                                ArgumentList(
+                                    SingletonSeparatedList(
+                                        Argument(
+                                            IdentifierName("client")))))),
+                        ExpressionStatement(
+                            AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                IdentifierName("_client"),
+                                IdentifierName("client")))));
+    }
+
     private static MemberDeclarationSyntax GenerateFromDtoMethod(
         string className,
-        List<string> propertyNames)
+        string? clientName,
+        Dictionary<string, EntityProperty?> propertyNames)
     {
         var dtoName = $"{className}Dto";
         var transferExpressions = propertyNames.SelectMany(pn => new SyntaxNodeOrToken[]{
             AssignmentExpression(
                 SyntaxKind.SimpleAssignmentExpression,
-                IdentifierName(pn),
-                MemberAccessExpression(
-                    SyntaxKind.SimpleMemberAccessExpression,
-                    IdentifierName("dto"),
-                    IdentifierName(pn))),
+                IdentifierName(pn.Key),
+                GenerateFromConversion(pn)),
             Token(SyntaxKind.CommaToken),
-        });
+        }).ToList();
+        transferExpressions.AddRange(AssignmentExpression(
+                SyntaxKind.SimpleAssignmentExpression,
+                IdentifierName("_source"),
+                IdentifierName("dto")),
+            Token(SyntaxKind.CommaToken));
+        var objectInitialisation = ObjectCreationExpression(IdentifierName(className))
+            .WithInitializer(
+            InitializerExpression(
+                SyntaxKind.ObjectInitializerExpression,
+                SeparatedList<ExpressionSyntax>(transferExpressions)));
+        var parameters = new List<ParameterSyntax>();
+        if (!string.IsNullOrEmpty(clientName))
+        {
+            parameters.Add(Parameter(Identifier("client")).WithType(IdentifierName(clientName)));
+            objectInitialisation = objectInitialisation.WithArgumentList(
+                ArgumentList(
+                    SingletonSeparatedList(
+                        Argument(IdentifierName("client")))));
+        }
+        parameters.Add(Parameter(Identifier("dto")).WithType(NullableType(IdentifierName(dtoName))));
+
         var method = MethodDeclaration(
-                    IdentifierName("className"),
+                    NullableType(IdentifierName(className)),
                     Identifier("From"))
                 .WithModifiers(
                     TokenList(
                         [Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.StaticKeyword)]))
                 .WithParameterList(
                     ParameterList(
-                        SingletonSeparatedList(
-                            Parameter(
-                                Identifier("dto"))
-                            .WithType(
-                                IdentifierName(dtoName)))))
+                        SeparatedList(parameters)))
                 .WithBody(
                     Block(
-                        SingletonList<StatementSyntax>(
-                            ReturnStatement(
-                                ObjectCreationExpression(
-                                    IdentifierName(dtoName))
-                                .WithInitializer(
-                                    InitializerExpression(
-                                        SyntaxKind.ObjectInitializerExpression,
-                                        SeparatedList<ExpressionSyntax>(
-                                            transferExpressions))))
-                            .WithSemicolonToken(
-                                MissingToken(SyntaxKind.SemicolonToken)))));
+                    IfStatement(
+                        BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            IdentifierName("dto"),
+                            LiteralExpression(SyntaxKind.NullLiteralExpression)),
+                        ReturnStatement(LiteralExpression(SyntaxKind.NullLiteralExpression))),
+                    ReturnStatement(objectInitialisation)));
         return method;
+    }
+
+    private static ExpressionSyntax GenerateFromConversion(KeyValuePair<string, EntityProperty?> pn)
+    {
+        ExpressionSyntax defaultValue = MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                IdentifierName("dto"),
+                IdentifierName(pn.Key));
+        if (!string.IsNullOrEmpty(pn.Value?.From)) defaultValue = InvocationExpression(
+            MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                IdentifierName(pn.Value.Type),
+                IdentifierName(pn.Value.From)))
+            .WithArgumentList(
+            ArgumentList(
+                SingletonSeparatedList(
+                    Argument(
+                        MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            IdentifierName("dto"),
+                            IdentifierName(pn.Key))))));
+        return string.IsNullOrEmpty(pn.Value?.NullValue)
+            ? defaultValue
+            : ConditionalExpression(
+                BinaryExpression(
+                    SyntaxKind.EqualsExpression,
+                    MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        IdentifierName("dto"),
+                        IdentifierName(pn.Key)),
+                    LiteralExpression(
+                        SyntaxKind.NullLiteralExpression)),
+                ParseExpression(pn.Value.NullValue),
+                defaultValue);
     }
 
     private async Task GenerateDto(
@@ -181,7 +394,7 @@ public sealed class Engine
         var properties = new List<MemberDeclarationSyntax>();
         foreach (var property in schema.Properties)
         {
-            properties.Add(GenerateProperty(property, false, true));
+            properties.Add(GenerateProperty(property, null, false, true));
         }
 
         // Generate the compilation and add the usings, namespace, and record
@@ -209,20 +422,16 @@ public sealed class Engine
             .ConfigureAwait(false);
     }
 
-    private PropertyDeclarationSyntax GenerateProperty(
+    private static PropertyDeclarationSyntax GenerateProperty(
         KeyValuePair<string, OpenApiSchema> property,
+        EntityProperty? propertyDefinition,
         bool includeDocComments,
         bool includeJsonName)
     {
         var propertyName = property.Key.Dehumanize();
-        Logger?.LogInformation(
-            "=> C# name: {property}, JSON name: {json}, type: {type}",
-            propertyName,
-            property.Key,
-            property.Value.Type);
-
-        var type = GenerateType(property.Key, property.Value);
-
+        var type = propertyDefinition == null
+            ? GenerateType(property.Key, property.Value)
+            : ParseName(propertyDefinition.Type);
         var docComments = TriviaList();
         if (includeDocComments)
         {
@@ -241,8 +450,9 @@ public sealed class Engine
             docComments = TriviaList(xmlDoc);
         }
 
+        if (propertyDefinition?.Nullable != false) type = NullableType(type);
         var definition = PropertyDeclaration(
-                    NullableType(type),
+                    type,
                     Identifier(propertyName))
                 .WithModifiers(
                     TokenList(Token(docComments, SyntaxKind.PublicKeyword, TriviaList())))
@@ -428,14 +638,22 @@ public sealed class Engine
     /// <summary>
     /// Initialises the engine.
     /// </summary>
-    /// <param name="definitionPath">The path to the definition.</param>
+    /// <param name="schemaPath">The path to the schema definition.</param>
+    /// <param name="apiPath">The path to the API definition.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/> instance.</param>
     /// <remarks>
     /// The definition MUST be in OpenAPI YAML format.
     /// </remarks>
     public async Task Initialise(
-        string definitionPath,
+        string schemaPath,
+        string apiPath,
         CancellationToken cancellationToken)
+    {
+        await LoadSchemaDefinition(schemaPath, cancellationToken).ConfigureAwait(false);
+        await LoadApiDefinition(apiPath, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task LoadSchemaDefinition(string definitionPath, CancellationToken cancellationToken)
     {
         Guard.IsNotNullOrWhiteSpace(definitionPath);
 
@@ -476,13 +694,14 @@ public sealed class Engine
                 errors);
         }
 
-        _definition = result.OpenApiDocument;
+        _schema = result.OpenApiDocument;
     }
 
-    [MemberNotNull(nameof(_definition))]
+    [MemberNotNull(nameof(_api))]
+    [MemberNotNull(nameof(_schema))]
     private void EnsureInitialised()
     {
-        if (_definition == null)
+        if (_schema == null || _api == null)
         {
             throw new GeneratorException("Unable to analyse components: engine has not been initialised");
         }

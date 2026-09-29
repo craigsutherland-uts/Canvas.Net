@@ -1,22 +1,10 @@
-﻿using Canvas.Client.Interfaces;
-using CommunityToolkit.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace Canvas.Client.Entities;
 
+[DebuggerDisplay($"{{{nameof(Name)}}} [{{{nameof(Id)}.ToString()}}]")]
 public partial record Account
 {
-    private readonly IAccounts _accountsClient;
-
-    /// <summary>
-    /// Initialise a new <see cref="Account"/> instance.
-    /// </summary>
-    /// <param name="accountsClient">The underlying <see cref="IAccounts"/>.</param>
-    internal Account(IAccounts accountsClient)
-    {
-        Guard.IsNotNull(accountsClient);
-        _accountsClient = accountsClient;
-    }
-
     /// <summary>
     /// Refreshes the details from Canvas.
     /// </summary>
@@ -28,7 +16,7 @@ public partial record Account
     /// </remarks>
     public async Task<Account> Refresh(CancellationToken cancellationToken)
     {
-        var refreshed = await _accountsClient
+        var refreshed = await _client
                 .Retrieve(Id, cancellationToken)
                 .ConfigureAwait(false)
             ?? throw new CanvasClientException("Unable to refresh account: Canvas returned a not found result");

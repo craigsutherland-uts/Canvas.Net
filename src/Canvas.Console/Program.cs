@@ -42,6 +42,7 @@ internal class Program
         };
         await engine.Initialise(
                 "canvas.yaml",
+                "api.yaml",
                 cancellationToken)
             .ConfigureAwait(false);
 

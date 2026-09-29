@@ -1,0 +1,18 @@
+﻿entities:
+- name:   Account
+  client: IAccounts
+  properties:
+  - name: Id
+    type: AccountIdentifier
+    from: From
+    nullable: false
+    nullValue: AccountIdentifier.None
+  - name: ParentAccountId
+    type: AccountIdentifier
+    from: FromNullable
+  - name: RootAccountId
+    type: AccountIdentifier
+    from: FromNullable
+- name:   Admin
+- name:   Assignment
+  client: IAssignments
