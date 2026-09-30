@@ -16,3 +16,77 @@
 - name:   Admin
 - name:   Assignment
   client: IAssignments
+  properties:
+  - name: AllDates
+    from: From
+    fromType: AssignmentDate
+  - name: DiscussionTopic
+    skip: true
+  - name: ExternalToolTagAttributes
+    from: From
+  - name: LockInfo
+    from: From
+  - name: NeedsGradingCountBySection
+    from: From
+    fromType: Entities.NeedsGradingCount
+  - name: Overrides
+    from: From
+    fromType: AssignmentOverride
+  - name: Rubric
+    from: From
+    fromType: RubricCriteria
+  - name: RubricSettings
+    from: From
+  - name: Submission
+    skip: true
+  - name: TurnitinSettings
+    from: From
+- name:   AssignmentDate
+- name:   AssignmentOverride
+- name:   CalendarLink
+- name:   Course
+  client: ICourses
+  properties:
+  - name: Calendar
+    from: Form
+  - name: CourseProgress
+    from: From
+  - name: Enrollments
+    from: From
+    fromType: Enrollment
+  - name: GradingPeriods
+    from: From
+    fromType: GradingPeriod
+  - name: Id
+    type: CourseIdentifier
+    from: From
+    nullable: false
+    nullValue: AccountIdentifier.None
+  - name: Term
+    from: From
+- name:   CourseProgress
+- name:   Enrollment
+  properties:
+  - name: User
+    type: User
+    from: From
+- name:   ExternalToolTagAttributes
+- name:   Grade
+- name:   GradingPeriod
+- name:   LockInfo
+- name:   NeedsGradingCount
+  properties:
+  - name:  NeedsGradingCount
+    alias: Count
+- name:   RubricCriteria
+  properties:
+  - name: Ratings
+    from: From
+    fromType: RubricRating
+- name:   RubricRating
+- name:   RubricSettings
+- name:   Term
+- name:   TurnitinSettings
+- name:   User
+typeAliases:
+  UserNullable: User

@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
   <Project Path="Canvas.Client/Canvas.Client.csproj" Id="b3e77c88-8c95-45f6-ac7e-2316cc3ae973" />
   <Project Path="Canvas.Console/Canvas.Console.csproj" Id="11a0dcc6-ec06-4564-9573-f7b51527c825" />
   <Project Path="Canvas.Generator/Canvas.Generator.csproj" Id="1b43ee70-0e6b-4af6-89ee-7eae194554e4" />

@@ -1,6 +1,7 @@
 ﻿using Canvas.Client.Dtos;
 using Canvas.Client.Interfaces;
 using Canvas.Client.Internal;
+
 using CommunityToolkit.Diagnostics;
 
 namespace Canvas.Client.Entities;
@@ -142,5 +143,12 @@ public sealed partial record Account
             WorkflowState = dto.WorkflowState,
             _source = dto,
         };
+    }
+
+    internal static IList<Account> From(IAccounts client, IEnumerable<AccountDto>? dto)
+    {
+        if (dto == null)
+            return [];
+        return [.. dto.Select(item => From(client, item)!)];
     }
 }

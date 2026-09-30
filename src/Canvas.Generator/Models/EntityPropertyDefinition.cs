@@ -3,12 +3,22 @@
 /// <summary>
 /// A property for an entity.
 /// </summary>
-public class EntityProperty
+public class EntityPropertyDefinition
 {
+    /// <summary>
+    /// An alias for the property.
+    /// </summary>
+    public string? Alias {  get; set; }
+
     /// <summary>
     /// A static method to convert from a raw value to the type value.
     /// </summary>
     public string? From { get; set; }
+
+    /// <summary>
+    /// The type that contains the static method.
+    /// </summary>
+    public string? FromType { get; set; }
 
     /// <summary>
     /// The name of the entity.
@@ -26,7 +36,12 @@ public class EntityProperty
     public string? NullValue { get; set; }
 
     /// <summary>
+    /// Should the generator skip this property.
+    /// </summary>
+    public bool Skip {  get; set; }
+
+    /// <summary>
     /// The type of the entity.
     /// </summary>
-    public required string Type { get; set; }
+    public string? Type { get; set; }
 }

@@ -1,0 +1,39 @@
+﻿using Canvas.Client.Dtos;
+
+namespace Canvas.Client.Entities;
+/// <summary>
+/// The Calendar link entity definition.
+/// </summary>
+public sealed partial record CalendarLink
+{
+    private CalendarLinkDto? _source;
+    /// <summary>
+    /// A flag indicating whether the CalendarLink is new or retrieved from Canvas.
+    /// </summary>
+    public bool IsNew => _source == null;
+    /// <summary>
+    /// The URL of the calendar in ICS format
+    /// </summary> 
+    /// <example>
+    /// "https://canvas.instructure.com/feeds/calendars/course_abcdef.ics"
+    /// </example>
+    public string? Ics { get; init; }
+
+    internal static CalendarLink? From(CalendarLinkDto? dto)
+    {
+        if (dto == null)
+            return null;
+        return new CalendarLink
+        {
+            Ics = dto.Ics,
+            _source = dto,
+        };
+    }
+
+    internal static IList<CalendarLink> From(IEnumerable<CalendarLinkDto>? dto)
+    {
+        if (dto == null)
+            return [];
+        return [.. dto.Select(item => From(item)!)];
+    }
+}

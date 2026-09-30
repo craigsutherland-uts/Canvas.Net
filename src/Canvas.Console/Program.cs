@@ -17,7 +17,7 @@ internal class Program
             .CreateLogger();
         var loggerFactory = new SerilogLoggerFactory(serilogLogger);
         var rootLogger = loggerFactory.CreateLogger<Program>();
-        var mode = 1;
+        var mode = 2;
 
         var tokenSource = new CancellationTokenSource();
         var cancellationToken = tokenSource.Token;
