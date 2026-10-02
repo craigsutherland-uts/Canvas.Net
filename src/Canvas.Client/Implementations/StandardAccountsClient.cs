@@ -1,6 +1,4 @@
-﻿using Canvas.Client.Dtos;
-using Canvas.Client.Entities;
-using Canvas.Client.Interfaces;
+﻿using Canvas.Client.Entities;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 
@@ -9,11 +7,13 @@ namespace Canvas.Client.Implementations;
 /// <summary>
 /// The default implementation of <see cref="IAccounts"/>.
 /// </summary>
+/// <param name="parent">The parent <see cref="ICanvasClient"/>.</param>
 /// <param name="connection">The <see cref="ICanvasConnection"/> instance to use.</param>
 /// <param name="logger">A <see cref="ILogger"/> for logging any messages.</param>
 /// <param name="options">The <see cref="ICanvasOptions"/> to use when connecting to Canvas.</param>
 [CanvasClient<IAccounts>]
 public sealed class StandardAccountsClient(
+        ICanvasClient parent,
         ICanvasConnection connection,
         ILogger<StandardAccountsClient> logger,
         ICanvasOptions options)
@@ -25,7 +25,7 @@ public sealed class StandardAccountsClient(
     /// <returns>A new <see cref="Account"/> instance.</returns>
     public Account New()
     {
-        return new Account(this)
+        return new Account(parent)
         {
             Id = AccountIdentifier.None,
         };
@@ -45,6 +45,6 @@ public sealed class StandardAccountsClient(
                 options,
                 cancellationToken)
             .ConfigureAwait(false);
-        return Account.From(this, dto);
+        return Account.From(parent, dto);
     }
 }

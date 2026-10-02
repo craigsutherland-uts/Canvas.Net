@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record CalendarLink
 {
     private CalendarLinkDto? _source;
+    private readonly ICanvasClient _client;
+    internal CalendarLink(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the CalendarLink is new or retrieved from Canvas.
     /// </summary>
@@ -17,21 +24,21 @@ public sealed partial record CalendarLink
     /// </example>
     public string? Ics { get; init; }
 
-    internal static CalendarLink? From(CalendarLinkDto? dto)
+    internal static CalendarLink? From(ICanvasClient client, CalendarLinkDto? dto)
     {
         if (dto == null)
             return null;
-        return new CalendarLink
+        return new CalendarLink(client)
         {
             Ics = dto.Ics,
             _source = dto,
         };
     }
 
-    internal static IList<CalendarLink> From(IEnumerable<CalendarLinkDto>? dto)
+    internal static IList<CalendarLink> From(ICanvasClient client, IEnumerable<CalendarLinkDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

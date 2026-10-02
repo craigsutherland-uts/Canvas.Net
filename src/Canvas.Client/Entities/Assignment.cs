@@ -5,8 +5,8 @@ namespace Canvas.Client.Entities;
 public sealed partial record Assignment
 {
     private AssignmentDto? _source;
-    private readonly IAssignments _client;
-    internal Assignment(IAssignments client)
+    private readonly ICanvasClient _client;
+    internal Assignment(ICanvasClient client)
     {
         Guard.IsNotNull(client);
         _client = client;
@@ -393,13 +393,13 @@ public sealed partial record Assignment
     /// </example>
     public bool? VericiteEnabled { get; init; }
 
-    internal static Assignment? From(IAssignments client, AssignmentDto? dto)
+    internal static Assignment? From(ICanvasClient client, AssignmentDto? dto)
     {
         if (dto == null)
             return null;
         return new Assignment(client)
         {
-            AllDates = AssignmentDate.From(dto.AllDates),
+            AllDates = AssignmentDate.From(client, dto.AllDates),
             AllowedExtensions = dto.AllowedExtensions,
             AnonymousSubmissions = dto.AnonymousSubmissions,
             AssignmentGroupId = dto.AssignmentGroupId,
@@ -410,7 +410,7 @@ public sealed partial record Assignment
             Description = dto.Description,
             DueAt = dto.DueAt,
             DueDateRequired = dto.DueDateRequired,
-            ExternalToolTagAttributes = ExternalToolTagAttributes.From(dto.ExternalToolTagAttributes),
+            ExternalToolTagAttributes = ExternalToolTagAttributes.From(client, dto.ExternalToolTagAttributes),
             FreezeOnCopy = dto.FreezeOnCopy,
             Frozen = dto.Frozen,
             FrozenAttributes = dto.FrozenAttributes,
@@ -427,17 +427,17 @@ public sealed partial record Assignment
             IntraGroupPeerReviews = dto.IntraGroupPeerReviews,
             LockAt = dto.LockAt,
             LockExplanation = dto.LockExplanation,
-            LockInfo = LockInfo.From(dto.LockInfo),
+            LockInfo = LockInfo.From(client, dto.LockInfo),
             LockedForUser = dto.LockedForUser,
             MaxNameLength = dto.MaxNameLength,
             ModeratedGrading = dto.ModeratedGrading,
             Muted = dto.Muted,
             Name = dto.Name,
             NeedsGradingCount = dto.NeedsGradingCount,
-            NeedsGradingCountBySection = Entities.NeedsGradingCount.From(dto.NeedsGradingCountBySection),
+            NeedsGradingCountBySection = Entities.NeedsGradingCount.From(client, dto.NeedsGradingCountBySection),
             OmitFromFinalGrade = dto.OmitFromFinalGrade,
             OnlyVisibleToOverrides = dto.OnlyVisibleToOverrides,
-            Overrides = AssignmentOverride.From(dto.Overrides),
+            Overrides = AssignmentOverride.From(client, dto.Overrides),
             PeerReviewCount = dto.PeerReviewCount,
             PeerReviews = dto.PeerReviews,
             PeerReviewsAssignAt = dto.PeerReviewsAssignAt,
@@ -446,12 +446,12 @@ public sealed partial record Assignment
             PostToSis = dto.PostToSis,
             Published = dto.Published,
             QuizId = dto.QuizId,
-            Rubric = RubricCriteria.From(dto.Rubric),
-            RubricSettings = RubricSettings.From(dto.RubricSettings),
+            Rubric = RubricCriteria.From(client, dto.Rubric),
+            RubricSettings = RubricSettings.From(client, dto.RubricSettings),
             SubmissionTypes = dto.SubmissionTypes,
             SubmissionsDownloadUrl = dto.SubmissionsDownloadUrl,
             TurnitinEnabled = dto.TurnitinEnabled,
-            TurnitinSettings = TurnitinSettings.From(dto.TurnitinSettings),
+            TurnitinSettings = TurnitinSettings.From(client, dto.TurnitinSettings),
             UnlockAt = dto.UnlockAt,
             Unpublishable = dto.Unpublishable,
             UpdatedAt = dto.UpdatedAt,
@@ -461,7 +461,7 @@ public sealed partial record Assignment
         };
     }
 
-    internal static IList<Assignment> From(IAssignments client, IEnumerable<AssignmentDto>? dto)
+    internal static IList<Assignment> From(ICanvasClient client, IEnumerable<AssignmentDto>? dto)
     {
         if (dto == null)
             return[];

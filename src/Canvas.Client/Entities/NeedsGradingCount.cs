@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record NeedsGradingCount
 {
     private NeedsGradingCountDto? _source;
+    private readonly ICanvasClient _client;
+    internal NeedsGradingCount(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the NeedsGradingCount is new or retrieved from Canvas.
     /// </summary>
@@ -24,11 +31,11 @@ public sealed partial record NeedsGradingCount
     /// </example>
     public string? SectionId { get; init; }
 
-    internal static NeedsGradingCount? From(NeedsGradingCountDto? dto)
+    internal static NeedsGradingCount? From(ICanvasClient client, NeedsGradingCountDto? dto)
     {
         if (dto == null)
             return null;
-        return new NeedsGradingCount
+        return new NeedsGradingCount(client)
         {
             Count = dto.Count,
             SectionId = dto.SectionId,
@@ -36,10 +43,10 @@ public sealed partial record NeedsGradingCount
         };
     }
 
-    internal static IList<NeedsGradingCount> From(IEnumerable<NeedsGradingCountDto>? dto)
+    internal static IList<NeedsGradingCount> From(ICanvasClient client, IEnumerable<NeedsGradingCountDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

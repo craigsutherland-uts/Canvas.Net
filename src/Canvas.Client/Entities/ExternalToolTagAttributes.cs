@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record ExternalToolTagAttributes
 {
     private ExternalToolTagAttributesDto? _source;
+    private readonly ICanvasClient _client;
+    internal ExternalToolTagAttributes(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the ExternalToolTagAttributes is new or retrieved from Canvas.
     /// </summary>
@@ -31,11 +38,11 @@ public sealed partial record ExternalToolTagAttributes
     /// </example>
     public string? Url { get; init; }
 
-    internal static ExternalToolTagAttributes? From(ExternalToolTagAttributesDto? dto)
+    internal static ExternalToolTagAttributes? From(ICanvasClient client, ExternalToolTagAttributesDto? dto)
     {
         if (dto == null)
             return null;
-        return new ExternalToolTagAttributes
+        return new ExternalToolTagAttributes(client)
         {
             NewTab = dto.NewTab,
             ResourceLinkId = dto.ResourceLinkId,
@@ -44,10 +51,10 @@ public sealed partial record ExternalToolTagAttributes
         };
     }
 
-    internal static IList<ExternalToolTagAttributes> From(IEnumerable<ExternalToolTagAttributesDto>? dto)
+    internal static IList<ExternalToolTagAttributes> From(ICanvasClient client, IEnumerable<ExternalToolTagAttributesDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

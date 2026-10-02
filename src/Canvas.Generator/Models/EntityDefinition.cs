@@ -8,9 +8,9 @@ namespace Canvas.Generator.Models;
 public class EntityDefinition
 {
     /// <summary>
-    /// An optional client that will be associated with the entity.
+    /// Is the client required.
     /// </summary>
-    public string? Client { get; set; }
+    public bool Client { get; set; } = true;
 
     /// <summary>
     /// The custom properties for an entity.

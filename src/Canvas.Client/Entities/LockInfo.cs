@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record LockInfo
 {
     private LockInfoDto? _source;
+    private readonly ICanvasClient _client;
+    internal LockInfo(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the LockInfo is new or retrieved from Canvas.
     /// </summary>
@@ -45,11 +52,11 @@ public sealed partial record LockInfo
     /// </example>
     public DateTime? UnlockAt { get; init; }
 
-    internal static LockInfo? From(LockInfoDto? dto)
+    internal static LockInfo? From(ICanvasClient client, LockInfoDto? dto)
     {
         if (dto == null)
             return null;
-        return new LockInfo
+        return new LockInfo(client)
         {
             AssetString = dto.AssetString,
             ContextModule = dto.ContextModule,
@@ -60,10 +67,10 @@ public sealed partial record LockInfo
         };
     }
 
-    internal static IList<LockInfo> From(IEnumerable<LockInfoDto>? dto)
+    internal static IList<LockInfo> From(ICanvasClient client, IEnumerable<LockInfoDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

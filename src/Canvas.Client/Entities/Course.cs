@@ -5,8 +5,8 @@ namespace Canvas.Client.Entities;
 public sealed partial record Course
 {
     private CourseDto? _source;
-    private readonly ICourses _client;
-    internal Course(ICourses client)
+    private readonly ICanvasClient _client;
+    internal Course(ICanvasClient client)
     {
         Guard.IsNotNull(client);
         _client = client;
@@ -356,7 +356,7 @@ public sealed partial record Course
     /// </example>
     public string? WorkflowState { get; init; }
 
-    internal static Course? From(ICourses client, CourseDto? dto)
+    internal static Course? From(ICanvasClient client, CourseDto? dto)
     {
         if (dto == null)
             return null;
@@ -371,19 +371,19 @@ public sealed partial record Course
             Blueprint = dto.Blueprint,
             BlueprintRestrictions = dto.BlueprintRestrictions,
             BlueprintRestrictionsByObjectType = dto.BlueprintRestrictionsByObjectType,
-            Calendar = CalendarLink.From(dto.Calendar),
+            Calendar = CalendarLink.From(client, dto.Calendar),
             CourseCode = dto.CourseCode,
             CourseColor = dto.CourseColor,
             CourseFormat = dto.CourseFormat,
-            CourseProgress = CourseProgress.From(dto.CourseProgress),
+            CourseProgress = CourseProgress.From(client, dto.CourseProgress),
             CreatedAt = dto.CreatedAt,
             DefaultView = dto.DefaultView,
             EndAt = dto.EndAt,
             EnrollmentTermId = TermIdentifier.FromNullable(dto.EnrollmentTermId),
-            Enrollments = Enrollment.From(dto.Enrollments),
+            Enrollments = Enrollment.From(client, dto.Enrollments),
             FriendlyName = dto.FriendlyName,
             GradePassbackSetting = dto.GradePassbackSetting,
-            GradingPeriods = GradingPeriod.From(dto.GradingPeriods),
+            GradingPeriods = GradingPeriod.From(client, dto.GradingPeriods),
             GradingStandardId = dto.GradingStandardId,
             HideFinalGrades = dto.HideFinalGrades,
             HomeroomCourse = dto.HomeroomCourse,
@@ -411,7 +411,7 @@ public sealed partial record Course
             StorageQuotaUsedMb = dto.StorageQuotaUsedMb,
             SyllabusBody = dto.SyllabusBody,
             Template = dto.Template,
-            Term = Term.From(dto.Term),
+            Term = Term.From(client, dto.Term),
             TimeZone = dto.TimeZone,
             TotalStudents = dto.TotalStudents,
             Uuid = dto.Uuid,
@@ -420,7 +420,7 @@ public sealed partial record Course
         };
     }
 
-    internal static IList<Course> From(ICourses client, IEnumerable<CourseDto>? dto)
+    internal static IList<Course> From(ICanvasClient client, IEnumerable<CourseDto>? dto)
     {
         if (dto == null)
             return[];

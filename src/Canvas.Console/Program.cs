@@ -71,26 +71,23 @@ internal class Program
         try
         {
             var client = factory.Get(settings.CanvasUrl, settings.CanvasToken);
-            var courseId = CourseIdentifier.From("39479");
-            var root = await client.Courses.Retrieve(
-                    courseId,
+            var userId = UserIdentifier.From("39479");
+            var item = await client.Users.RetrieveSelf(
                     cancellationToken)
                 .ConfigureAwait(false);
-            if (root == null)
+            if (item == null)
             {
-                rootLogger.LogWarning("Unable to retrieve course {id}", courseId);
+                rootLogger.LogWarning("Unable to retrieve user {id}", userId);
             }
             else
             {
                 // Not needed, but let's test the Refresh() method
-                root = await root.Refresh(cancellationToken).ConfigureAwait(false);
-                rootLogger.LogInformation("The course name is {name} [{id}]", root.Name, root.Id);
-                rootLogger.LogInformation("The status is {status}", root.IsNew);
+                item = await item.Refresh(cancellationToken).ConfigureAwait(false);
+                rootLogger.LogInformation("User details: {user}", item);
             }
 
-            var test = client.Courses.New();
-            rootLogger.LogInformation("The course name is {name} [{id}]", test.Name, test.Id);
-            rootLogger.LogInformation("The status is {status}", test.IsNew);
+            var test = client.Users.New();
+            rootLogger.LogInformation("Started new user");
         }
         catch (Exception ex)
         {

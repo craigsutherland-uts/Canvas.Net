@@ -5,8 +5,8 @@ namespace Canvas.Client.Entities;
 public sealed partial record Account
 {
     private AccountDto? _source;
-    private readonly IAccounts _client;
-    internal Account(IAccounts client)
+    private readonly ICanvasClient _client;
+    internal Account(ICanvasClient client)
     {
         Guard.IsNotNull(client);
         _client = client;
@@ -115,7 +115,7 @@ public sealed partial record Account
     /// </example>
     public string? WorkflowState { get; init; }
 
-    internal static Account? From(IAccounts client, AccountDto? dto)
+    internal static Account? From(ICanvasClient client, AccountDto? dto)
     {
         if (dto == null)
             return null;
@@ -139,7 +139,7 @@ public sealed partial record Account
         };
     }
 
-    internal static IList<Account> From(IAccounts client, IEnumerable<AccountDto>? dto)
+    internal static IList<Account> From(ICanvasClient client, IEnumerable<AccountDto>? dto)
     {
         if (dto == null)
             return[];

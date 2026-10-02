@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record Enrollment
 {
     private EnrollmentDto? _source;
+    private readonly ICanvasClient _client;
+    internal Enrollment(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the Enrollment is new or retrieved from Canvas.
     /// </summary>
@@ -341,11 +348,11 @@ public sealed partial record Enrollment
     /// </example>
     public UserIdentifier? UserId { get; init; }
 
-    internal static Enrollment? From(EnrollmentDto? dto)
+    internal static Enrollment? From(ICanvasClient client, EnrollmentDto? dto)
     {
         if (dto == null)
             return null;
-        return new Enrollment
+        return new Enrollment(client)
         {
             AssociatedUserId = dto.AssociatedUserId,
             ComputedCurrentGrade = dto.ComputedCurrentGrade,
@@ -370,7 +377,7 @@ public sealed partial record Enrollment
             CurrentPeriodUnpostedFinalScore = dto.CurrentPeriodUnpostedFinalScore,
             EndAt = dto.EndAt,
             EnrollmentState = dto.EnrollmentState,
-            Grades = Grade.From(dto.Grades),
+            Grades = Grade.From(client, dto.Grades),
             HasGradingPeriods = dto.HasGradingPeriods,
             HtmlUrl = dto.HtmlUrl,
             Id = dto.Id,
@@ -397,16 +404,16 @@ public sealed partial record Enrollment
             UnpostedFinalGrade = dto.UnpostedFinalGrade,
             UnpostedFinalScore = dto.UnpostedFinalScore,
             UpdatedAt = dto.UpdatedAt,
-            User = User.From(dto.User),
+            User = User.From(client, dto.User),
             UserId = UserIdentifier.FromNullable(dto.UserId),
             _source = dto,
         };
     }
 
-    internal static IList<Enrollment> From(IEnumerable<EnrollmentDto>? dto)
+    internal static IList<Enrollment> From(ICanvasClient client, IEnumerable<EnrollmentDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

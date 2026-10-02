@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record GradingPeriod
 {
     private GradingPeriodDto? _source;
+    private readonly ICanvasClient _client;
+    internal GradingPeriod(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the GradingPeriod is new or retrieved from Canvas.
     /// </summary>
@@ -47,11 +54,11 @@ public sealed partial record GradingPeriod
     /// </summary>
     public double? Weight { get; init; }
 
-    internal static GradingPeriod? From(GradingPeriodDto? dto)
+    internal static GradingPeriod? From(ICanvasClient client, GradingPeriodDto? dto)
     {
         if (dto == null)
             return null;
-        return new GradingPeriod
+        return new GradingPeriod(client)
         {
             CloseDate = dto.CloseDate,
             EndDate = dto.EndDate,
@@ -64,10 +71,10 @@ public sealed partial record GradingPeriod
         };
     }
 
-    internal static IList<GradingPeriod> From(IEnumerable<GradingPeriodDto>? dto)
+    internal static IList<GradingPeriod> From(ICanvasClient client, IEnumerable<GradingPeriodDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

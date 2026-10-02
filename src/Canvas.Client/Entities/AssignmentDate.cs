@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record AssignmentDate
 {
     private AssignmentDateDto? _source;
+    private readonly ICanvasClient _client;
+    internal AssignmentDate(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the AssignmentDate is new or retrieved from Canvas.
     /// </summary>
@@ -52,11 +59,11 @@ public sealed partial record AssignmentDate
     /// </example>
     public DateTime? UnlockAt { get; init; }
 
-    internal static AssignmentDate? From(AssignmentDateDto? dto)
+    internal static AssignmentDate? From(ICanvasClient client, AssignmentDateDto? dto)
     {
         if (dto == null)
             return null;
-        return new AssignmentDate
+        return new AssignmentDate(client)
         {
             Base = dto.Base,
             DueAt = dto.DueAt,
@@ -68,10 +75,10 @@ public sealed partial record AssignmentDate
         };
     }
 
-    internal static IList<AssignmentDate> From(IEnumerable<AssignmentDateDto>? dto)
+    internal static IList<AssignmentDate> From(ICanvasClient client, IEnumerable<AssignmentDateDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

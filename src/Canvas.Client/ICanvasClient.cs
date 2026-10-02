@@ -16,4 +16,9 @@ public interface ICanvasClient
     /// The root-level course functionality.
     /// </summary>
     ICourses Courses { get; }
+
+    /// <summary>
+    /// The root-level user functionality.
+    /// </summary>
+    IUsers Users { get; }
 }

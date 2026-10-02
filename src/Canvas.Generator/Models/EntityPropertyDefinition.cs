@@ -21,6 +21,11 @@ public class EntityPropertyDefinition
     public string? From { get; set; }
 
     /// <summary>
+    /// Pass the client into the from method.
+    /// </summary>
+    public bool FromClient { get; set; }
+
+    /// <summary>
     /// The type that contains the static method.
     /// </summary>
     public string? FromType { get; set; }

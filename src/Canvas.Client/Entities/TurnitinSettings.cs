@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record TurnitinSettings
 {
     private TurnitinSettingsDto? _source;
+    private readonly ICanvasClient _client;
+    internal TurnitinSettings(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the TurnitinSettings is new or retrieved from Canvas.
     /// </summary>
@@ -66,11 +73,11 @@ public sealed partial record TurnitinSettings
     /// </example>
     public bool? SPaperCheck { get; init; }
 
-    internal static TurnitinSettings? From(TurnitinSettingsDto? dto)
+    internal static TurnitinSettings? From(ICanvasClient client, TurnitinSettingsDto? dto)
     {
         if (dto == null)
             return null;
-        return new TurnitinSettings
+        return new TurnitinSettings(client)
         {
             ExcludeBiblio = dto.ExcludeBiblio,
             ExcludeQuoted = dto.ExcludeQuoted,
@@ -84,10 +91,10 @@ public sealed partial record TurnitinSettings
         };
     }
 
-    internal static IList<TurnitinSettings> From(IEnumerable<TurnitinSettingsDto>? dto)
+    internal static IList<TurnitinSettings> From(ICanvasClient client, IEnumerable<TurnitinSettingsDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

@@ -38,7 +38,7 @@ internal sealed partial record UserDto
     public string? Sections { get; init; }
 
     [JsonPropertyName("sis_import_id")]
-    public int? SisImportId { get; init; }
+    public  string ? SisImportId { get; init; }
 
     [JsonPropertyName("sis_user_id")]
     public string? SisUserId { get; init; }

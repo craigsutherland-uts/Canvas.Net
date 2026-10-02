@@ -1,6 +1,5 @@
 ﻿entities:
   Account:
-    client: IAccounts
     properties:
       Id:
         type: AccountIdentifier
@@ -21,39 +20,46 @@
       User:
         type: User
         from: From
+        fromClient: true
         fromType: Entities.User
   Assignment:
-    client: IAssignments
     properties:
       AllDates:
         from: From
+        fromClient: true
         fromType: AssignmentDate
       DiscussionTopic:
         skip: true
       ExternalToolTagAttributes:
         from: From
+        fromClient: true
       LockInfo:
         from: From
+        fromClient: true
       NeedsGradingCountBySection:
         from: From
+        fromClient: true
         fromType: Entities.NeedsGradingCount
       Overrides:
         from: From
+        fromClient: true
         fromType: AssignmentOverride
       Rubric:
         from: From
+        fromClient: true
         fromType: RubricCriteria
       RubricSettings:
         from: From
+        fromClient: true
       Submission:
         skip: true
       TurnitinSettings:
         from: From
+        fromClient: true
   AssignmentDate: {}
   AssignmentOverride: {}
   CalendarLink: {}
   Course:
-    client: ICourses
     properties:
       AccountId:
         type: AccountIdentifier
@@ -61,10 +67,13 @@
         from: FromNullable
       Calendar:
         from: From
+        fromClient: true
       CourseProgress:
         from: From
+        fromClient: true
       Enrollments:
         from: From
+        fromClient: true
         fromType: Enrollment
       EnrollmentTermId:
         type: TermIdentifier
@@ -72,6 +81,7 @@
         from: FromNullable
       GradingPeriods:
         from: From
+        fromClient: true
         fromType: GradingPeriod
       Id:
         type: CourseIdentifier
@@ -88,12 +98,14 @@
         dto: string
       Term:
         from: From
+        fromClient: true
   CourseProgress: {}
   Enrollment:
     properties:
       Grades:
         type: Grade
         from: From
+        fromClient: true
       RoleId:
         type: RoleIdentifier
         dto: string
@@ -101,6 +113,7 @@
       User:
         type: User
         from: From
+        fromClient: true
       UserId:
         type: UserIdentifier
         dto: string
@@ -117,6 +130,7 @@
     properties:
       Ratings:
         from: From
+        fromClient: true
         fromType: RubricRating
   RubricRating: {}
   RubricSettings: {}
@@ -126,6 +140,7 @@
     properties:
       Enrollments:
         from: From
+        fromClient: true
         fromType: Enrollment
       Id:
         type: UserIdentifier
@@ -133,6 +148,9 @@
         from: From
         nullable: false
         nullValue: UserIdentifier.None
+      SisImportId:
+        type: string
+        dto: string
 typeAliases:
   UserNullable: User
 

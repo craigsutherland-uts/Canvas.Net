@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record Grade
 {
     private GradeDto? _source;
+    private readonly ICanvasClient _client;
+    internal Grade(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the Grade is new or retrieved from Canvas.
     /// </summary>
@@ -46,11 +53,11 @@ public sealed partial record Grade
     /// </summary>
     public double? UnpostedFinalScore { get; init; }
 
-    internal static Grade? From(GradeDto? dto)
+    internal static Grade? From(ICanvasClient client, GradeDto? dto)
     {
         if (dto == null)
             return null;
-        return new Grade
+        return new Grade(client)
         {
             CurrentGrade = dto.CurrentGrade,
             CurrentScore = dto.CurrentScore,
@@ -65,10 +72,10 @@ public sealed partial record Grade
         };
     }
 
-    internal static IList<Grade> From(IEnumerable<GradeDto>? dto)
+    internal static IList<Grade> From(ICanvasClient client, IEnumerable<GradeDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

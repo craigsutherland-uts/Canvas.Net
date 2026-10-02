@@ -15,6 +15,7 @@ public sealed class StandardClient(IServiceProvider services)
 {
     private readonly Lazy<IAccounts> _accounts = new(services.GetRequiredService<IAccounts>);
     private readonly Lazy<ICourses> _courses = new(services.GetRequiredService<ICourses>);
+    private readonly Lazy<IUsers> _users = new(services.GetRequiredService<IUsers>);
 
     /// <summary>
     /// The root-level account functionality.
@@ -25,4 +26,9 @@ public sealed class StandardClient(IServiceProvider services)
     /// The root-level course functionality.
     /// </summary>
     public ICourses Courses => _courses.Value;
+
+    /// <summary>
+    /// The root-level user functionality.
+    /// </summary>
+    public IUsers Users => _users.Value;
 }

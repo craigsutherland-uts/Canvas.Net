@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record RubricCriteria
 {
     private RubricCriteriaDto? _source;
+    private readonly ICanvasClient _client;
+    internal RubricCriteria(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the RubricCriteria is new or retrieved from Canvas.
     /// </summary>
@@ -63,11 +70,11 @@ public sealed partial record RubricCriteria
     /// </example>
     public string? VendorGuid { get; init; }
 
-    internal static RubricCriteria? From(RubricCriteriaDto? dto)
+    internal static RubricCriteria? From(ICanvasClient client, RubricCriteriaDto? dto)
     {
         if (dto == null)
             return null;
-        return new RubricCriteria
+        return new RubricCriteria(client)
         {
             CriterionUseRange = dto.CriterionUseRange,
             Description = dto.Description,
@@ -75,16 +82,16 @@ public sealed partial record RubricCriteria
             LearningOutcomeId = dto.LearningOutcomeId,
             LongDescription = dto.LongDescription,
             Points = dto.Points,
-            Ratings = RubricRating.From(dto.Ratings),
+            Ratings = RubricRating.From(client, dto.Ratings),
             VendorGuid = dto.VendorGuid,
             _source = dto,
         };
     }
 
-    internal static IList<RubricCriteria> From(IEnumerable<RubricCriteriaDto>? dto)
+    internal static IList<RubricCriteria> From(ICanvasClient client, IEnumerable<RubricCriteriaDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

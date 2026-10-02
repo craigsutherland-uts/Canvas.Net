@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record AssignmentOverride
 {
     private AssignmentOverrideDto? _source;
+    private readonly ICanvasClient _client;
+    internal AssignmentOverride(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the AssignmentOverride is new or retrieved from Canvas.
     /// </summary>
@@ -81,11 +88,11 @@ public sealed partial record AssignmentOverride
     /// </example>
     public DateTime? UnlockAt { get; init; }
 
-    internal static AssignmentOverride? From(AssignmentOverrideDto? dto)
+    internal static AssignmentOverride? From(ICanvasClient client, AssignmentOverrideDto? dto)
     {
         if (dto == null)
             return null;
-        return new AssignmentOverride
+        return new AssignmentOverride(client)
         {
             AllDay = dto.AllDay,
             AllDayDate = dto.AllDayDate,
@@ -102,10 +109,10 @@ public sealed partial record AssignmentOverride
         };
     }
 
-    internal static IList<AssignmentOverride> From(IEnumerable<AssignmentOverrideDto>? dto)
+    internal static IList<AssignmentOverride> From(ICanvasClient client, IEnumerable<AssignmentOverrideDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

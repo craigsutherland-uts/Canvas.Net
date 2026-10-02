@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record User
 {
     private UserDto? _source;
+    private readonly ICanvasClient _client;
+    internal User(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the User is new or retrieved from Canvas.
     /// </summary>
@@ -111,7 +118,7 @@ public sealed partial record User
     /// <example>
     /// 18
     /// </example>
-    public int? SisImportId { get; init; }
+    public  string ? SisImportId { get; init; }
     /// <summary>
     /// The SIS ID associated with the user.  This field is only included if the user came from a SIS import and has permissions to view SIS information.
     /// </summary> 
@@ -134,17 +141,17 @@ public sealed partial record User
     /// </example>
     public string? TimeZone { get; init; }
 
-    internal static User? From(UserDto? dto)
+    internal static User? From(ICanvasClient client, UserDto? dto)
     {
         if (dto == null)
             return null;
-        return new User
+        return new User(client)
         {
             AvatarState = dto.AvatarState,
             AvatarUrl = dto.AvatarUrl,
             Bio = dto.Bio,
             Email = dto.Email,
-            Enrollments = Enrollment.From(dto.Enrollments),
+            Enrollments = Enrollment.From(client, dto.Enrollments),
             FirstName = dto.FirstName,
             Id = dto.Id == null ? UserIdentifier.None : UserIdentifier.From(dto.Id),
             IntegrationId = dto.IntegrationId,
@@ -163,10 +170,10 @@ public sealed partial record User
         };
     }
 
-    internal static IList<User> From(IEnumerable<UserDto>? dto)
+    internal static IList<User> From(ICanvasClient client, IEnumerable<UserDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

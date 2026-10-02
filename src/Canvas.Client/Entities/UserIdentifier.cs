@@ -14,6 +14,11 @@ public readonly partial struct UserIdentifier
     public static readonly UserIdentifier None = new(string.Empty);
 
     /// <summary>
+    /// The self identifier.
+    /// </summary>
+    public static readonly UserIdentifier Self = From("self");
+
+    /// <summary>
     /// Determines whether one <see cref="UserIdentifier"/> has an earlier value than another 
     /// <see cref="UserIdentifier"/>.
     /// </summary>

@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record Term
 {
     private TermDto? _source;
+    private readonly ICanvasClient _client;
+    internal Term(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the Term is new or retrieved from Canvas.
     /// </summary>
@@ -35,11 +42,11 @@ public sealed partial record Term
     /// </example>
     public DateTime? StartAt { get; init; }
 
-    internal static Term? From(TermDto? dto)
+    internal static Term? From(ICanvasClient client, TermDto? dto)
     {
         if (dto == null)
             return null;
-        return new Term
+        return new Term(client)
         {
             EndAt = dto.EndAt,
             Id = dto.Id,
@@ -49,10 +56,10 @@ public sealed partial record Term
         };
     }
 
-    internal static IList<Term> From(IEnumerable<TermDto>? dto)
+    internal static IList<Term> From(ICanvasClient client, IEnumerable<TermDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

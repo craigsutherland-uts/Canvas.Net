@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record RubricRating
 {
     private RubricRatingDto? _source;
+    private readonly ICanvasClient _client;
+    internal RubricRating(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the RubricRating is new or retrieved from Canvas.
     /// </summary>
@@ -38,11 +45,11 @@ public sealed partial record RubricRating
     /// </example>
     public int? Points { get; init; }
 
-    internal static RubricRating? From(RubricRatingDto? dto)
+    internal static RubricRating? From(ICanvasClient client, RubricRatingDto? dto)
     {
         if (dto == null)
             return null;
-        return new RubricRating
+        return new RubricRating(client)
         {
             Description = dto.Description,
             Id = dto.Id,
@@ -52,10 +59,10 @@ public sealed partial record RubricRating
         };
     }
 
-    internal static IList<RubricRating> From(IEnumerable<RubricRatingDto>? dto)
+    internal static IList<RubricRating> From(ICanvasClient client, IEnumerable<RubricRatingDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

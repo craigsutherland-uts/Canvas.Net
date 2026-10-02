@@ -1,6 +1,4 @@
-﻿using Canvas.Client.Dtos;
-using Canvas.Client.Entities;
-using Canvas.Client.Interfaces;
+﻿using Canvas.Client.Entities;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 
@@ -9,11 +7,13 @@ namespace Canvas.Client.Implementations;
 /// <summary>
 /// The default implementation of <see cref="ICourses"/>.
 /// </summary>
+/// <param name="parent">The parent <see cref="ICanvasClient"/>.</param>
 /// <param name="connection">The <see cref="ICanvasConnection"/> instance to use.</param>
 /// <param name="logger">A <see cref="ILogger"/> for logging any messages.</param>
 /// <param name="options">The <see cref="ICanvasOptions"/> to use when connecting to Canvas.</param>
 [CanvasClient<ICourses>]
 public sealed class StandardCoursesClient(
+        ICanvasClient parent,
         ICanvasConnection connection,
         ILogger<StandardCoursesClient> logger,
         ICanvasOptions options)
@@ -25,7 +25,7 @@ public sealed class StandardCoursesClient(
     /// <returns>A new <see cref="Course"/> instance.</returns>
     public Course New()
     {
-        return new Course(this)
+        return new Course(parent)
         {
             Id = CourseIdentifier.None,
         };
@@ -45,6 +45,6 @@ public sealed class StandardCoursesClient(
                 options,
                 cancellationToken)
             .ConfigureAwait(false);
-        return Course.From(this, dto);
+        return Course.From(parent, dto);
     }
 }

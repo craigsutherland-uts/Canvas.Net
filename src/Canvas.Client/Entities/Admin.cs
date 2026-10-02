@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record Admin
 {
     private AdminDto? _source;
+    private readonly ICanvasClient _client;
+    internal Admin(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the Admin is new or retrieved from Canvas.
     /// </summary>
@@ -35,24 +42,24 @@ public sealed partial record Admin
     /// </example>
     public string? WorkflowState { get; init; }
 
-    internal static Admin? From(AdminDto? dto)
+    internal static Admin? From(ICanvasClient client, AdminDto? dto)
     {
         if (dto == null)
             return null;
-        return new Admin
+        return new Admin(client)
         {
             Id = dto.Id,
             Role = dto.Role,
-            User = Entities.User.From(dto.User),
+            User = Entities.User.From(client, dto.User),
             WorkflowState = dto.WorkflowState,
             _source = dto,
         };
     }
 
-    internal static IList<Admin> From(IEnumerable<AdminDto>? dto)
+    internal static IList<Admin> From(ICanvasClient client, IEnumerable<AdminDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

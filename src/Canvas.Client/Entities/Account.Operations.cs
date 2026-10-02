@@ -17,6 +17,7 @@ public partial record Account
     public async Task<Account> Refresh(CancellationToken cancellationToken)
     {
         var refreshed = await _client
+                .Accounts
                 .Retrieve(Id, cancellationToken)
                 .ConfigureAwait(false)
             ?? throw new CanvasClientException("Unable to refresh account: Canvas returned a not found result");

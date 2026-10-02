@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record RubricSettings
 {
     private RubricSettingsDto? _source;
+    private readonly ICanvasClient _client;
+    internal RubricSettings(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the RubricSettings is new or retrieved from Canvas.
     /// </summary>
@@ -52,11 +59,11 @@ public sealed partial record RubricSettings
     /// </example>
     public bool? HidePoints { get; init; }
 
-    internal static RubricSettings? From(RubricSettingsDto? dto)
+    internal static RubricSettings? From(ICanvasClient client, RubricSettingsDto? dto)
     {
         if (dto == null)
             return null;
-        return new RubricSettings
+        return new RubricSettings(client)
         {
             Id = dto.Id,
             Title = dto.Title,
@@ -68,10 +75,10 @@ public sealed partial record RubricSettings
         };
     }
 
-    internal static IList<RubricSettings> From(IEnumerable<RubricSettingsDto>? dto)
+    internal static IList<RubricSettings> From(ICanvasClient client, IEnumerable<RubricSettingsDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

@@ -5,6 +5,13 @@ namespace Canvas.Client.Entities;
 public sealed partial record CourseProgress
 {
     private CourseProgressDto? _source;
+    private readonly ICanvasClient _client;
+    internal CourseProgress(ICanvasClient client)
+    {
+        Guard.IsNotNull(client);
+        _client = client;
+    }
+
     /// <summary>
     /// A flag indicating whether the CourseProgress is new or retrieved from Canvas.
     /// </summary>
@@ -38,11 +45,11 @@ public sealed partial record CourseProgress
     /// </example>
     public int? RequirementCount { get; init; }
 
-    internal static CourseProgress? From(CourseProgressDto? dto)
+    internal static CourseProgress? From(ICanvasClient client, CourseProgressDto? dto)
     {
         if (dto == null)
             return null;
-        return new CourseProgress
+        return new CourseProgress(client)
         {
             CompletedAt = dto.CompletedAt,
             NextRequirementUrl = dto.NextRequirementUrl,
@@ -52,10 +59,10 @@ public sealed partial record CourseProgress
         };
     }
 
-    internal static IList<CourseProgress> From(IEnumerable<CourseProgressDto>? dto)
+    internal static IList<CourseProgress> From(ICanvasClient client, IEnumerable<CourseProgressDto>? dto)
     {
         if (dto == null)
             return[];
-        return[..dto.Select(item => From(item)!)];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

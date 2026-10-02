@@ -107,11 +107,11 @@ public sealed class Engine
             GenerateField(IdentifierName($"{className}Dto"), "_source", false, true),
         };
 
-        if (!string.IsNullOrEmpty(apiDefinition.Client))
+        if (apiDefinition.Client)
         {
             members.AddRange(
-                GenerateField(IdentifierName(apiDefinition.Client), "_client", true, false),
-                GenerateConstructor(className, apiDefinition.Client));
+                GenerateField(IdentifierName("ICanvasClient"), "_client", true, false),
+                GenerateConstructor(className, "ICanvasClient"));
         }
         members.Add(GenerateIsNewProperty(className));
 
@@ -130,9 +130,10 @@ public sealed class Engine
         }
 
         // Add the From methods
+        var clientName = apiDefinition.Client ? "ICanvasClient" : null;
         members.AddRange(
-            GenerateFromSingleDtoMethod(className, apiDefinition.Client, propertyNames),
-            GenerateFromListDtoMethod(className, apiDefinition.Client, propertyNames));
+            GenerateFromSingleDtoMethod(className, clientName, propertyNames),
+            GenerateFromListDtoMethod(className, clientName, propertyNames));
 
         // Generate the compilation and add the usings, namespace, and record
         var compilation = GenerateCompilationUnit(
@@ -329,7 +330,7 @@ public sealed class Engine
                     Identifier("From"))
                 .WithModifiers(
                     TokenList(
-                        [ Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.StaticKeyword)]))
+                        [Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.StaticKeyword)]))
                 .WithParameterList(
                     ParameterList(
                         SeparatedList(parameters)))
@@ -431,36 +432,45 @@ public sealed class Engine
                 SyntaxKind.SimpleMemberAccessExpression,
                 IdentifierName("dto"),
                 IdentifierName(pn.Key));
-        if (!string.IsNullOrEmpty(propertyDef?.From)) defaultValue = InvocationExpression(
-            MemberAccessExpression(
-                SyntaxKind.SimpleMemberAccessExpression,
-                string.IsNullOrEmpty(propertyDef.FromType) 
-                    ? string.IsNullOrEmpty(propertyDef.Type)
-                        ? typeDef
-                        : IdentifierName(propertyDef.Type)
-                    : IdentifierName(propertyDef.FromType),
-                IdentifierName(propertyDef.From)))
-            .WithArgumentList(
-            ArgumentList(
-                SingletonSeparatedList(
-                    Argument(
-                        MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            IdentifierName("dto"),
-                            IdentifierName(pn.Key))))));
+        if (!string.IsNullOrEmpty(propertyDef?.From))
+        {
+            var args = new List<ArgumentSyntax>();
+            if (propertyDef.FromClient)
+            {
+                args.Add(Argument(IdentifierName("client")));
+            }
+            args.Add(Argument(
+                MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    IdentifierName("dto"),
+                    IdentifierName(pn.Key))));
+            defaultValue = InvocationExpression(
+                MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    string.IsNullOrEmpty(propertyDef.FromType)
+                        ? string.IsNullOrEmpty(propertyDef.Type)
+                            ? typeDef
+                            : IdentifierName(propertyDef.Type)
+                        : IdentifierName(propertyDef.FromType),
+                    IdentifierName(propertyDef.From)))
+                .WithArgumentList(
+                ArgumentList(
+                    SeparatedList(args)));
+        }
+
         return string.IsNullOrEmpty(propertyDef?.NullValue)
-            ? defaultValue
-            : ConditionalExpression(
-                BinaryExpression(
-                    SyntaxKind.EqualsExpression,
-                    MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        IdentifierName("dto"),
-                        IdentifierName(pn.Key)),
-                    LiteralExpression(
-                        SyntaxKind.NullLiteralExpression)),
-                ParseExpression(propertyDef.NullValue),
-                defaultValue);
+                    ? defaultValue
+                    : ConditionalExpression(
+                        BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                IdentifierName("dto"),
+                                IdentifierName(pn.Key)),
+                            LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                        ParseExpression(propertyDef.NullValue),
+                        defaultValue);
     }
 
     private async Task GenerateDto(
@@ -487,11 +497,11 @@ public sealed class Engine
                 ? property.Key.Dehumanize()
                 : propertyDefinition.Alias;
             var (propertyDef, _) = GenerateProperty(
-                propertyName, 
-                property, 
+                propertyName,
+                property,
                 new EntityPropertyDefinition { Type = propertyDefinition?.Dto },
-                false, 
-                true, 
+                false,
+                true,
                 "Dto");
             properties.Add(propertyDef);
         }
