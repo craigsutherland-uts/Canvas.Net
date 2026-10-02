@@ -1,8 +1,3 @@
-﻿using Canvas.Client.Dtos;
-using Canvas.Client.Interfaces;
-
-using CommunityToolkit.Diagnostics;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Assignment entity definition.
@@ -26,10 +21,10 @@ public sealed partial record Assignment
     /// </summary>
     public IList<AssignmentDate>? AllDates { get; init; }
     /// <summary>
-    /// Allowed file extensions, which take effect if submission_types includes 'online_upload'.
+    /// Allowed file extensions, which take effect if submission_types includes &apos;online_upload&apos;.
     /// </summary> 
     /// <example>
-    /// ["docx", "ppt"]
+    /// [&quot;docx&quot;, &quot;ppt&quot;]
     /// </example>
     public IList<string>? AllowedExtensions { get; init; }
     /// <summary>
@@ -40,14 +35,14 @@ public sealed partial record Assignment
     /// </example>
     public bool? AnonymousSubmissions { get; init; }
     /// <summary>
-    /// the ID of the assignment's group
+    /// the ID of the assignment&apos;s group
     /// </summary> 
     /// <example>
     /// 2
     /// </example>
     public int? AssignmentGroupId { get; init; }
     /// <summary>
-    /// (Optional) If 'assignment_visibility' is included in the 'include' parameter, includes an array of student IDs who can see this assignment.
+    /// (Optional) If &apos;assignment_visibility&apos; is included in the &apos;include&apos; parameter, includes an array of student IDs who can see this assignment.
     /// </summary> 
     /// <example>
     /// [137, 381, 572]
@@ -78,7 +73,7 @@ public sealed partial record Assignment
     /// the assignment description, in an HTML fragment
     /// </summary> 
     /// <example>
-    /// "<p>Do the following:</p>..."
+    /// &quot;&lt;p&gt;Do the following:&lt;/p&gt;...&quot;
     /// </example>
     public string? Description { get; init; }
     /// <summary>
@@ -117,7 +112,7 @@ public sealed partial record Assignment
     /// (Optional) Array of frozen attributes for the assignment. Only account administrators currently have permission to change an attribute in this list. Will be empty if no attributes are frozen for this assignment. Possible frozen attributes are: title, description, lock_at, points_possible, grading_type, submission_types, assignment_group_id, allowed_extensions, group_category_id, notify_of_update, peer_reviews NOTE: This field will only be present if the AssignmentFreezer plugin is available for your account.
     /// </summary> 
     /// <example>
-    /// ["title"]
+    /// [&quot;title&quot;]
     /// </example>
     public IList<string>? FrozenAttributes { get; init; }
     /// <summary>
@@ -128,14 +123,14 @@ public sealed partial record Assignment
     /// </example>
     public bool? GradeGroupStudentsIndividually { get; init; }
     /// <summary>
-    /// The id of the grading standard being applied to this assignment. Valid if grading_type is 'letter_grade' or 'gpa_scale'.
+    /// The id of the grading standard being applied to this assignment. Valid if grading_type is &apos;letter_grade&apos; or &apos;gpa_scale&apos;.
     /// </summary>
     public int? GradingStandardId { get; init; }
     /// <summary>
-    /// The type of grading the assignment receives; one of 'pass_fail', 'percent', 'letter_grade', 'gpa_scale', 'points'
+    /// The type of grading the assignment receives; one of &apos;pass_fail&apos;, &apos;percent&apos;, &apos;letter_grade&apos;, &apos;gpa_scale&apos;, &apos;points&apos;
     /// </summary> 
     /// <example>
-    /// "points"
+    /// &quot;points&quot;
     /// </example>
     public string? GradingType { get; init; }
     /// <summary>
@@ -160,10 +155,10 @@ public sealed partial record Assignment
     /// </example>
     public bool? HasSubmittedSubmissions { get; init; }
     /// <summary>
-    /// the URL to the assignment's web page
+    /// the URL to the assignment&apos;s web page
     /// </summary> 
     /// <example>
-    /// "https://..."
+    /// &quot;https://...&quot;
     /// </example>
     public string? HtmlUrl { get; init; }
     /// <summary>
@@ -181,11 +176,11 @@ public sealed partial record Assignment
     /// (optional, Third Party unique identifier for Assignment)
     /// </summary> 
     /// <example>
-    /// "12341234"
+    /// &quot;12341234&quot;
     /// </example>
     public string? IntegrationId { get; init; }
     /// <summary>
-    /// Boolean representing whether or not members from within the same group on a group assignment can be assigned to peer review their own group's work
+    /// Boolean representing whether or not members from within the same group on a group assignment can be assigned to peer review their own group&apos;s work
     /// </summary> 
     /// <example>
     /// False
@@ -202,7 +197,7 @@ public sealed partial record Assignment
     /// (Optional) An explanation of why this is locked for the user. Present when locked_for_user is true.
     /// </summary> 
     /// <example>
-    /// "This assignment is locked until September 1 at 12:00am"
+    /// &quot;This assignment is locked until September 1 at 12:00am&quot;
     /// </example>
     public string? LockExplanation { get; init; }
     /// <summary>
@@ -217,7 +212,7 @@ public sealed partial record Assignment
     /// </example>
     public bool? LockedForUser { get; init; }
     /// <summary>
-    /// An integer indicating the maximum length an assignment's name may be
+    /// An integer indicating the maximum length an assignment&apos;s name may be
     /// </summary> 
     /// <example>
     /// 15
@@ -238,7 +233,7 @@ public sealed partial record Assignment
     /// the name of the assignment
     /// </summary> 
     /// <example>
-    /// "some assignment"
+    /// &quot;some assignment&quot;
     /// </example>
     public string? Name { get; init; }
     /// <summary>
@@ -249,14 +244,14 @@ public sealed partial record Assignment
     /// </example>
     public int? NeedsGradingCount { get; init; }
     /// <summary>
-    /// if the requesting user has grading rights and the 'needs_grading_count_by_section' flag is specified, the number of submissions that need grading split out by section. NOTE: This key is NOT present unless you pass the 'needs_grading_count_by_section' argument as true.  ANOTHER NOTE: it's possible to be enrolled in multiple sections, and if a student is setup that way they will show an assignment that needs grading in multiple sections (effectively the count will be duplicated between sections)
+    /// if the requesting user has grading rights and the &apos;needs_grading_count_by_section&apos; flag is specified, the number of submissions that need grading split out by section. NOTE: This key is NOT present unless you pass the &apos;needs_grading_count_by_section&apos; argument as true.  ANOTHER NOTE: it&apos;s possible to be enrolled in multiple sections, and if a student is setup that way they will show an assignment that needs grading in multiple sections (effectively the count will be duplicated between sections)
     /// </summary> 
     /// <example>
     /// []
     /// </example>
     public IList<NeedsGradingCount>? NeedsGradingCountBySection { get; init; }
     /// <summary>
-    /// (Optional) If true, the assignment will be omitted from the student's final grade
+    /// (Optional) If true, the assignment will be omitted from the student&apos;s final grade
     /// </summary> 
     /// <example>
     /// True
@@ -270,7 +265,7 @@ public sealed partial record Assignment
     /// </example>
     public bool? OnlyVisibleToOverrides { get; init; }
     /// <summary>
-    /// (Optional) If 'overrides' is included in the 'include' parameter, includes an array of assignment override objects.
+    /// (Optional) If &apos;overrides&apos; is included in the &apos;include&apos; parameter, includes an array of assignment override objects.
     /// </summary>
     public IList<AssignmentOverride>? Overrides { get; init; }
     /// <summary>
@@ -288,7 +283,7 @@ public sealed partial record Assignment
     /// </example>
     public bool? PeerReviews { get; init; }
     /// <summary>
-    /// String representing a date the reviews are due by. Must be a date that occurs after the default due date. If blank, or date is not after the assignment's due date, the assignment's due date will be used. NOTE: This key is NOT present unless you have automatic_peer_reviews set to true.
+    /// String representing a date the reviews are due by. Must be a date that occurs after the default due date. If blank, or date is not after the assignment&apos;s due date, the assignment&apos;s due date will be used. NOTE: This key is NOT present unless you have automatic_peer_reviews set to true.
     /// </summary> 
     /// <example>
     /// 2012-07-01T23:59:00.0000000-06:00
@@ -323,7 +318,7 @@ public sealed partial record Assignment
     /// </example>
     public bool? Published { get; init; }
     /// <summary>
-    /// (Optional) id of the associated quiz (applies only when submission_types is ['online_quiz'])
+    /// (Optional) id of the associated quiz (applies only when submission_types is [&apos;online_quiz&apos;])
     /// </summary> 
     /// <example>
     /// 620
@@ -338,17 +333,17 @@ public sealed partial record Assignment
     /// </summary>
     public RubricSettings? RubricSettings { get; init; }
     /// <summary>
-    /// the types of submissions allowed for this assignment list containing one or more of the following: 'discussion_topic', 'online_quiz', 'on_paper', 'none', 'external_tool', 'online_text_entry', 'online_url', 'online_upload' 'media_recording'
+    /// the types of submissions allowed for this assignment list containing one or more of the following: &apos;discussion_topic&apos;, &apos;online_quiz&apos;, &apos;on_paper&apos;, &apos;none&apos;, &apos;external_tool&apos;, &apos;online_text_entry&apos;, &apos;online_url&apos;, &apos;online_upload&apos; &apos;media_recording&apos;
     /// </summary> 
     /// <example>
-    /// ["online_text_entry"]
+    /// [&quot;online_text_entry&quot;]
     /// </example>
     public IList<string>? SubmissionTypes { get; init; }
     /// <summary>
     /// the URL to download all submissions as a zip
     /// </summary> 
     /// <example>
-    /// "https://example.com/courses/:course_id/assignments/:id/submissions?zip=1"
+    /// &quot;https://example.com/courses/:course_id/assignments/:id/submissions?zip=1&quot;
     /// </example>
     public string? SubmissionsDownloadUrl { get; init; }
     /// <summary>
@@ -370,7 +365,7 @@ public sealed partial record Assignment
     /// </example>
     public DateTime? UnlockAt { get; init; }
     /// <summary>
-    /// Whether the assignment's 'published' state can be changed to false. Will be false if there are student submissions for the assignment.
+    /// Whether the assignment&apos;s &apos;published&apos; state can be changed to false. Will be false if there are student submissions for the assignment.
     /// </summary> 
     /// <example>
     /// False
@@ -469,7 +464,7 @@ public sealed partial record Assignment
     internal static IList<Assignment> From(IAssignments client, IEnumerable<AssignmentDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(client, item)!)];
+            return[];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

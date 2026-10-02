@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Rubric settings entity definition.
@@ -11,26 +9,44 @@ public sealed partial record RubricSettings
     /// A flag indicating whether the RubricSettings is new or retrieved from Canvas.
     /// </summary>
     public bool IsNew => _source == null;
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// 123
     /// </example>
     public int? Id { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
-    /// "Coursework"
+    /// &quot;Coursework&quot;
     /// </example>
     public string? Title { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// 123.12
     /// </example>
     public double? PointsPossible { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// False
     /// </example>
     public bool? FreeFormCriterionComments { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// False
     /// </example>
     public bool? HideScoreTotal { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// False
     /// </example>
@@ -50,5 +66,12 @@ public sealed partial record RubricSettings
             HidePoints = dto.HidePoints,
             _source = dto,
         };
+    }
+
+    internal static IList<RubricSettings> From(IEnumerable<RubricSettingsDto>? dto)
+    {
+        if (dto == null)
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

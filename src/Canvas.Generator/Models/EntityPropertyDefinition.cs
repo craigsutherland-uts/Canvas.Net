@@ -11,6 +11,11 @@ public class EntityPropertyDefinition
     public string? Alias {  get; set; }
 
     /// <summary>
+    /// The DTO data type.
+    /// </summary>
+    public string? Dto { get; set; }
+
+    /// <summary>
     /// A static method to convert from a raw value to the type value.
     /// </summary>
     public string? From { get; set; }
@@ -19,11 +24,6 @@ public class EntityPropertyDefinition
     /// The type that contains the static method.
     /// </summary>
     public string? FromType { get; set; }
-
-    /// <summary>
-    /// The name of the entity.
-    /// </summary>
-    public required string Name { get; set; }
 
     /// <summary>
     /// Is the property nullable.

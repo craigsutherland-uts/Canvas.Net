@@ -11,4 +11,9 @@ public interface ICanvasClient
     /// The root-level account functionality.
     /// </summary>
     IAccounts Accounts { get; }
+
+    /// <summary>
+    /// The root-level course functionality.
+    /// </summary>
+    ICourses Courses { get; }
 }

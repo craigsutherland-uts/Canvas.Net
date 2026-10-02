@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Needs grading count entity definition.
@@ -22,7 +20,7 @@ public sealed partial record NeedsGradingCount
     /// The section ID
     /// </summary> 
     /// <example>
-    /// "123456"
+    /// &quot;123456&quot;
     /// </example>
     public string? SectionId { get; init; }
 
@@ -41,7 +39,7 @@ public sealed partial record NeedsGradingCount
     internal static IList<NeedsGradingCount> From(IEnumerable<NeedsGradingCountDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(item)!)];
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

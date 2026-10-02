@@ -1,92 +1,138 @@
 ﻿entities:
-- name:   Account
-  client: IAccounts
-  properties:
-  - name: Id
-    type: AccountIdentifier
-    from: From
-    nullable: false
-    nullValue: AccountIdentifier.None
-  - name: ParentAccountId
-    type: AccountIdentifier
-    from: FromNullable
-  - name: RootAccountId
-    type: AccountIdentifier
-    from: FromNullable
-- name:   Admin
-- name:   Assignment
-  client: IAssignments
-  properties:
-  - name: AllDates
-    from: From
-    fromType: AssignmentDate
-  - name: DiscussionTopic
-    skip: true
-  - name: ExternalToolTagAttributes
-    from: From
-  - name: LockInfo
-    from: From
-  - name: NeedsGradingCountBySection
-    from: From
-    fromType: Entities.NeedsGradingCount
-  - name: Overrides
-    from: From
-    fromType: AssignmentOverride
-  - name: Rubric
-    from: From
-    fromType: RubricCriteria
-  - name: RubricSettings
-    from: From
-  - name: Submission
-    skip: true
-  - name: TurnitinSettings
-    from: From
-- name:   AssignmentDate
-- name:   AssignmentOverride
-- name:   CalendarLink
-- name:   Course
-  client: ICourses
-  properties:
-  - name: Calendar
-    from: Form
-  - name: CourseProgress
-    from: From
-  - name: Enrollments
-    from: From
-    fromType: Enrollment
-  - name: GradingPeriods
-    from: From
-    fromType: GradingPeriod
-  - name: Id
-    type: CourseIdentifier
-    from: From
-    nullable: false
-    nullValue: AccountIdentifier.None
-  - name: Term
-    from: From
-- name:   CourseProgress
-- name:   Enrollment
-  properties:
-  - name: User
-    type: User
-    from: From
-- name:   ExternalToolTagAttributes
-- name:   Grade
-- name:   GradingPeriod
-- name:   LockInfo
-- name:   NeedsGradingCount
-  properties:
-  - name:  NeedsGradingCount
-    alias: Count
-- name:   RubricCriteria
-  properties:
-  - name: Ratings
-    from: From
-    fromType: RubricRating
-- name:   RubricRating
-- name:   RubricSettings
-- name:   Term
-- name:   TurnitinSettings
-- name:   User
+  Account:
+    client: IAccounts
+    properties:
+      Id:
+        type: AccountIdentifier
+        dto: string
+        from: From
+        nullable: false
+        nullValue: AccountIdentifier.None
+      ParentAccountId:
+        type: AccountIdentifier
+        dto: string
+        from: FromNullable
+      RootAccountId:
+        type: AccountIdentifier
+        dto: string
+        from: FromNullable
+  Admin:
+    properties:
+      User:
+        type: User
+        from: From
+        fromType: Entities.User
+  Assignment:
+    client: IAssignments
+    properties:
+      AllDates:
+        from: From
+        fromType: AssignmentDate
+      DiscussionTopic:
+        skip: true
+      ExternalToolTagAttributes:
+        from: From
+      LockInfo:
+        from: From
+      NeedsGradingCountBySection:
+        from: From
+        fromType: Entities.NeedsGradingCount
+      Overrides:
+        from: From
+        fromType: AssignmentOverride
+      Rubric:
+        from: From
+        fromType: RubricCriteria
+      RubricSettings:
+        from: From
+      Submission:
+        skip: true
+      TurnitinSettings:
+        from: From
+  AssignmentDate: {}
+  AssignmentOverride: {}
+  CalendarLink: {}
+  Course:
+    client: ICourses
+    properties:
+      AccountId:
+        type: AccountIdentifier
+        dto: string
+        from: FromNullable
+      Calendar:
+        from: From
+      CourseProgress:
+        from: From
+      Enrollments:
+        from: From
+        fromType: Enrollment
+      EnrollmentTermId:
+        type: TermIdentifier
+        dto: string
+        from: FromNullable
+      GradingPeriods:
+        from: From
+        fromType: GradingPeriod
+      Id:
+        type: CourseIdentifier
+        dto: string
+        from: From
+        nullable: false
+        nullValue: CourseIdentifier.None
+      RootAccountId:
+        type: AccountIdentifier
+        dto: string
+        from: FromNullable
+      SisImportId:
+        type: string
+        dto: string
+      Term:
+        from: From
+  CourseProgress: {}
+  Enrollment:
+    properties:
+      Grades:
+        type: Grade
+        from: From
+      RoleId:
+        type: RoleIdentifier
+        dto: string
+        from: FromNullable
+      User:
+        type: User
+        from: From
+      UserId:
+        type: UserIdentifier
+        dto: string
+        from: FromNullable
+  ExternalToolTagAttributes: {}
+  Grade: {}
+  GradingPeriod: {}
+  LockInfo: {}
+  NeedsGradingCount:
+    properties:
+      NeedsGradingCount:
+        alias: Count
+  RubricCriteria:
+    properties:
+      Ratings:
+        from: From
+        fromType: RubricRating
+  RubricRating: {}
+  RubricSettings: {}
+  Term: {}
+  TurnitinSettings: {}
+  User:
+    properties:
+      Enrollments:
+        from: From
+        fromType: Enrollment
+      Id:
+        type: UserIdentifier
+        dto: string
+        from: From
+        nullable: false
+        nullValue: UserIdentifier.None
 typeAliases:
   UserNullable: User
+

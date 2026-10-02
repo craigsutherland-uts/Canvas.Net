@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Canvas.Client.Dtos;
 /// <summary>
@@ -17,7 +17,7 @@ internal sealed partial record UserDto
 
     [JsonPropertyName("first_name")]
     public string? FirstName { get; init; }
-    public int? Id { get; init; }
+    public  string ? Id { get; init; }
 
     [JsonPropertyName("integration_id")]
     public string? IntegrationId { get; init; }

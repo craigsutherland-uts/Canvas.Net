@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Grading period entity definition.
@@ -30,7 +28,7 @@ public sealed partial record GradingPeriod
     /// </summary>
     public int? Id { get; init; }
     /// <summary>
-    /// If true, the grading period's close_date has passed.
+    /// If true, the grading period&apos;s close_date has passed.
     /// </summary>
     public bool? IsClosed { get; init; }
     /// <summary>
@@ -69,7 +67,7 @@ public sealed partial record GradingPeriod
     internal static IList<GradingPeriod> From(IEnumerable<GradingPeriodDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(item)!)];
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

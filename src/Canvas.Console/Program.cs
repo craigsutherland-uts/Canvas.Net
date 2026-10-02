@@ -17,7 +17,7 @@ internal class Program
             .CreateLogger();
         var loggerFactory = new SerilogLoggerFactory(serilogLogger);
         var rootLogger = loggerFactory.CreateLogger<Program>();
-        var mode = 2;
+        var mode = 1;
 
         var tokenSource = new CancellationTokenSource();
         var cancellationToken = tokenSource.Token;
@@ -71,25 +71,25 @@ internal class Program
         try
         {
             var client = factory.Get(settings.CanvasUrl, settings.CanvasToken);
-            var accountId = AccountIdentifier.Self;
-            var root = await client.Accounts.Retrieve(
-                    accountId,
+            var courseId = CourseIdentifier.From("39479");
+            var root = await client.Courses.Retrieve(
+                    courseId,
                     cancellationToken)
                 .ConfigureAwait(false);
             if (root == null)
             {
-                rootLogger.LogWarning("Unable to retrieve account {id}", accountId);
+                rootLogger.LogWarning("Unable to retrieve course {id}", courseId);
             }
             else
             {
                 // Not needed, but let's test the Refresh() method
                 root = await root.Refresh(cancellationToken).ConfigureAwait(false);
-                rootLogger.LogInformation("The account name is {name} [{id}]", root.Name, root.Id);
+                rootLogger.LogInformation("The course name is {name} [{id}]", root.Name, root.Id);
                 rootLogger.LogInformation("The status is {status}", root.IsNew);
             }
 
-            var test = client.Accounts.New();
-            rootLogger.LogInformation("The account name is {name} [{id}]", test.Name, test.Id);
+            var test = client.Courses.New();
+            rootLogger.LogInformation("The course name is {name} [{id}]", test.Name, test.Id);
             rootLogger.LogInformation("The status is {status}", test.IsNew);
         }
         catch (Exception ex)

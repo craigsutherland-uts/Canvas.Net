@@ -7,23 +7,16 @@ namespace Canvas.Generator.Models;
 /// </summary>
 public class EntityDefinition
 {
-    private Dictionary<string, EntityPropertyDefinition>? propertiesByJsonName;
-    private Dictionary<string, EntityPropertyDefinition>? propertiesByCSharpName;
-
     /// <summary>
     /// An optional client that will be associated with the entity.
     /// </summary>
     public string? Client { get; set; }
 
     /// <summary>
-    /// The name of the entity.
-    /// </summary>
-    public required string Name { get; set; }
-
-    /// <summary>
     /// The custom properties for an entity.
     /// </summary>
-    public IList<EntityPropertyDefinition> Properties { get; } = [];
+    public IDictionary<string, EntityPropertyDefinition> Properties { get; } 
+        = new Dictionary<string, EntityPropertyDefinition>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Attempts to find a property by its name.
@@ -32,13 +25,8 @@ public class EntityDefinition
     /// <returns>The <see cref="EntityPropertyDefinition"/> instance if found; <c language="">null</c> otherwise.</returns>
     public EntityPropertyDefinition? FindProperty(string name)
     {
-        propertiesByJsonName  ??= Properties.ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
-        propertiesByCSharpName ??= Properties.ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
-        if (!propertiesByJsonName.TryGetValue(name, out var property))
-        {
-            propertiesByCSharpName.TryGetValue(name.Dehumanize(), out property);
-        }
-
-        return property;
+        return Properties.TryGetValue(name, out var property)
+            ? property
+            : null;
     }
 }

@@ -1,6 +1,13 @@
-﻿using Canvas.Generator.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Security;
+
+using Canvas.Generator.Models;
+
 using CommunityToolkit.Diagnostics;
+
 using Humanizer;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -8,9 +15,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
+
 using SharpYaml.Serialization;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Canvas.Generator;
@@ -53,10 +60,9 @@ public sealed class Engine
         EnsureFolderExists(Path.Combine(fullPath, "Dtos"));
 
         // Generate each entity
-        var entities = _api.Entities.ToDictionary(e => e.Name, StringComparer.Ordinal);
         foreach (var component in _schema.Components.Schemas)
         {
-            if (!entities.TryGetValue(component.Key, out var entity)) continue;
+            if (!_api.Entities.TryGetValue(component.Key, out var entity)) continue;
             await GenerateEntity(
                     Path.Combine(fullPath, "Entities"),
                     component,
@@ -113,7 +119,7 @@ public sealed class Engine
         var propertyNames = new Dictionary<string, (TypeSyntax, EntityPropertyDefinition?)>(StringComparer.Ordinal);
         foreach (var property in schema.Properties)
         {
-            var propertyDefinition = apiDefinition.FindProperty(property.Key);
+            var propertyDefinition = apiDefinition.FindProperty(property.Key.Dehumanize());
             if (propertyDefinition?.Skip == true) continue;
             var propertyName = string.IsNullOrEmpty(propertyDefinition?.Alias)
                 ? property.Key.Dehumanize()
@@ -475,12 +481,18 @@ public sealed class Engine
         var properties = new List<MemberDeclarationSyntax>();
         foreach (var property in schema.Properties)
         {
-            var propertyDefinition = apiDefinition.FindProperty(property.Key);
+            var propertyDefinition = apiDefinition.FindProperty(property.Key.Dehumanize());
             if (propertyDefinition?.Skip == true) continue;
             var propertyName = string.IsNullOrEmpty(propertyDefinition?.Alias)
                 ? property.Key.Dehumanize()
                 : propertyDefinition.Alias;
-            var (propertyDef, _) = GenerateProperty(propertyName, property, null, false, true, "Dto");
+            var (propertyDef, _) = GenerateProperty(
+                propertyName, 
+                property, 
+                new EntityPropertyDefinition { Type = propertyDefinition?.Dto },
+                false, 
+                true, 
+                "Dto");
             properties.Add(propertyDef);
         }
 
@@ -530,10 +542,10 @@ public sealed class Engine
             var exampleValue = RetrieveExampleValue(property.Value.Example);
             if (!string.IsNullOrEmpty(exampleValue))
             {
-                xmlDoc.Insert(0, GenerateXmlDoc("example", exampleValue, !hasNewLine));
+                xmlDoc.Insert(0, GenerateXmlDoc("example", SecurityElement.Escape(exampleValue), !hasNewLine));
                 hasNewLine = true;
             }
-            xmlDoc.Insert(0, GenerateXmlDoc("summary", property.Value.Description ?? string.Empty, !hasNewLine));
+            xmlDoc.Insert(0, GenerateXmlDoc("summary", SecurityElement.Escape(property.Value.Description ?? string.Empty), !hasNewLine));
             docComments = TriviaList(xmlDoc);
         }
 

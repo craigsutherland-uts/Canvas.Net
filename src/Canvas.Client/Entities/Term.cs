@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Term entity definition.
@@ -26,7 +24,7 @@ public sealed partial record Term
     /// 
     /// </summary> 
     /// <example>
-    /// "Default Term"
+    /// &quot;Default Term&quot;
     /// </example>
     public string? Name { get; init; }
     /// <summary>
@@ -54,7 +52,7 @@ public sealed partial record Term
     internal static IList<Term> From(IEnumerable<TermDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(item)!)];
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

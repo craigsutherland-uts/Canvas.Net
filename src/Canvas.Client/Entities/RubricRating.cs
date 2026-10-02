@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Rubric rating entity definition.
@@ -15,21 +13,21 @@ public sealed partial record RubricRating
     /// 
     /// </summary> 
     /// <example>
-    /// "Full marks"
+    /// &quot;Full marks&quot;
     /// </example>
     public string? Description { get; init; }
     /// <summary>
     /// 
     /// </summary> 
     /// <example>
-    /// "rat1"
+    /// &quot;rat1&quot;
     /// </example>
     public string? Id { get; init; }
     /// <summary>
     /// 
     /// </summary> 
     /// <example>
-    /// "Student completed the assignment flawlessly."
+    /// &quot;Student completed the assignment flawlessly.&quot;
     /// </example>
     public string? LongDescription { get; init; }
     /// <summary>
@@ -57,7 +55,7 @@ public sealed partial record RubricRating
     internal static IList<RubricRating> From(IEnumerable<RubricRatingDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(item)!)];
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

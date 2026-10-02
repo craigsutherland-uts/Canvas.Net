@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The User entity definition.
@@ -12,31 +10,31 @@ public sealed partial record User
     /// </summary>
     public bool IsNew => _source == null;
     /// <summary>
-    /// Optional If avatars are enabled and caller is admin, this field can be requested and will contain the current state of the user's avatar.
+    /// Optional If avatars are enabled and caller is admin, this field can be requested and will contain the current state of the user&apos;s avatar.
     /// </summary> 
     /// <example>
-    /// "approved"
+    /// &quot;approved&quot;
     /// </example>
     public string? AvatarState { get; init; }
     /// <summary>
-    /// If avatars are enabled, this field will be included and contain a url to retrieve the user's avatar.
+    /// If avatars are enabled, this field will be included and contain a url to retrieve the user&apos;s avatar.
     /// </summary> 
     /// <example>
-    /// "https://en.gravatar.com/avatar/d8cb8c8cd40ddf0cd05241443a591868?s=80&amp;r=g"
+    /// &quot;https://en.gravatar.com/avatar/d8cb8c8cd40ddf0cd05241443a591868?s=80&amp;r=g&quot;
     /// </example>
     public string? AvatarUrl { get; init; }
     /// <summary>
-    /// Optional: The user's bio.
+    /// Optional: The user&apos;s bio.
     /// </summary> 
     /// <example>
-    /// "I like the Muppets."
+    /// &quot;I like the Muppets.&quot;
     /// </example>
     public string? Bio { get; init; }
     /// <summary>
     /// Optional: This field can be requested with certain API calls, and will return the users primary email address.
     /// </summary> 
     /// <example>
-    /// "sheldon@caltech.example.com"
+    /// &quot;sheldon@caltech.example.com&quot;
     /// </example>
     public string? Email { get; init; }
     /// <summary>
@@ -53,12 +51,12 @@ public sealed partial record User
     /// <example>
     /// 2
     /// </example>
-    public int? Id { get; init; }
+    public UserIdentifier Id { get; init; }
     /// <summary>
     /// The integration_id associated with the user.  This field is only included if the user came from a SIS import and has permissions to view SIS information.
     /// </summary> 
     /// <example>
-    /// "ABC59802"
+    /// &quot;ABC59802&quot;
     /// </example>
     public string? IntegrationId { get; init; }
     /// <summary>
@@ -76,35 +74,35 @@ public sealed partial record User
     /// Optional: This field can be requested with certain API calls, and will return the users locale in RFC 5646 format.
     /// </summary> 
     /// <example>
-    /// "tlh"
+    /// &quot;tlh&quot;
     /// </example>
     public string? Locale { get; init; }
     /// <summary>
     /// The unique login id for the user.  This is what the user uses to log in to Canvas.
     /// </summary> 
     /// <example>
-    /// "sheldon@caltech.example.com"
+    /// &quot;sheldon@caltech.example.com&quot;
     /// </example>
     public string? LoginId { get; init; }
     /// <summary>
     /// The name of the user.
     /// </summary> 
     /// <example>
-    /// "Sheldon Cooper"
+    /// &quot;Sheldon Cooper&quot;
     /// </example>
     public string? Name { get; init; }
     /// <summary>
     /// A short name the user has selected, for use in conversations or other less formal places through the site.
     /// </summary> 
     /// <example>
-    /// "Shelly"
+    /// &quot;Shelly&quot;
     /// </example>
     public string? ShortName { get; init; }
     /// <summary>
     /// A list of the sections this user is part of in the courses they are part of.
     /// </summary> 
     /// <example>
-    /// "Section 1, Section 2, Section 2a"
+    /// &quot;Section 1, Section 2, Section 2a&quot;
     /// </example>
     public string? Sections { get; init; }
     /// <summary>
@@ -118,21 +116,21 @@ public sealed partial record User
     /// The SIS ID associated with the user.  This field is only included if the user came from a SIS import and has permissions to view SIS information.
     /// </summary> 
     /// <example>
-    /// "SHEL93921"
+    /// &quot;SHEL93921&quot;
     /// </example>
     public string? SisUserId { get; init; }
     /// <summary>
     /// The name of the user that is should be used for sorting groups of users, such as in the gradebook.
     /// </summary> 
     /// <example>
-    /// "Cooper, Sheldon"
+    /// &quot;Cooper, Sheldon&quot;
     /// </example>
     public string? SortableName { get; init; }
     /// <summary>
-    /// Optional: This field is only returned in certain API calls, and will return the IANA time zone name of the user's preferred timezone.
+    /// Optional: This field is only returned in certain API calls, and will return the IANA time zone name of the user&apos;s preferred timezone.
     /// </summary> 
     /// <example>
-    /// "America/Denver"
+    /// &quot;America/Denver&quot;
     /// </example>
     public string? TimeZone { get; init; }
 
@@ -146,9 +144,9 @@ public sealed partial record User
             AvatarUrl = dto.AvatarUrl,
             Bio = dto.Bio,
             Email = dto.Email,
-            //Enrollments = dto.Enrollments,
+            Enrollments = Enrollment.From(dto.Enrollments),
             FirstName = dto.FirstName,
-            Id = dto.Id,
+            Id = dto.Id == null ? UserIdentifier.None : UserIdentifier.From(dto.Id),
             IntegrationId = dto.IntegrationId,
             LastLogin = dto.LastLogin,
             LastName = dto.LastName,
@@ -168,7 +166,7 @@ public sealed partial record User
     internal static IList<User> From(IEnumerable<UserDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(item)!)];
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

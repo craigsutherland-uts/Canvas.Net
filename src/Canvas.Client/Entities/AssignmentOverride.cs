@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Assignment override entity definition.
@@ -27,7 +25,7 @@ public sealed partial record AssignmentOverride
     /// </example>
     public int? AssignmentId { get; init; }
     /// <summary>
-    /// the ID of the overrides's target section (present if the override targets a section)
+    /// the ID of the overrides&apos;s target section (present if the override targets a section)
     /// </summary> 
     /// <example>
     /// 1
@@ -41,7 +39,7 @@ public sealed partial record AssignmentOverride
     /// </example>
     public DateTime? DueAt { get; init; }
     /// <summary>
-    /// the ID of the override's target group (present if the override targets a group and the assignment is a group assignment)
+    /// the ID of the override&apos;s target group (present if the override targets a group and the assignment is a group assignment)
     /// </summary> 
     /// <example>
     /// 2
@@ -62,7 +60,7 @@ public sealed partial record AssignmentOverride
     /// </example>
     public DateTime? LockAt { get; init; }
     /// <summary>
-    /// the IDs of the override's target students (present if the override targets an ad-hoc set of students)
+    /// the IDs of the override&apos;s target students (present if the override targets an ad-hoc set of students)
     /// </summary> 
     /// <example>
     /// [1, 2, 3]
@@ -72,7 +70,7 @@ public sealed partial record AssignmentOverride
     /// the title of the override
     /// </summary> 
     /// <example>
-    /// "an assignment override"
+    /// &quot;an assignment override&quot;
     /// </example>
     public string? Title { get; init; }
     /// <summary>
@@ -107,7 +105,7 @@ public sealed partial record AssignmentOverride
     internal static IList<AssignmentOverride> From(IEnumerable<AssignmentOverrideDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(item)!)];
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

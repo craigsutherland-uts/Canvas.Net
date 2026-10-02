@@ -1,7 +1,6 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Canvas.Client.Dtos;
-
 /// <summary>
 /// A DTO for transferring External tool tag attributes entities.
 /// </summary>

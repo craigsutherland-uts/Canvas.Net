@@ -1,8 +1,3 @@
-﻿using Canvas.Client.Dtos;
-using Canvas.Client.Interfaces;
-
-using CommunityToolkit.Diagnostics;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Course entity definition.
@@ -34,7 +29,7 @@ public sealed partial record Course
     /// <example>
     /// 81259
     /// </example>
-    public int? AccountId { get; init; }
+    public AccountIdentifier? AccountId { get; init; }
     /// <summary>
     /// 
     /// </summary> 
@@ -86,18 +81,18 @@ public sealed partial record Course
     /// the course code
     /// </summary> 
     /// <example>
-    /// "INSTCON12"
+    /// &quot;INSTCON12&quot;
     /// </example>
     public string? CourseCode { get; init; }
     /// <summary>
-    /// Not specified in Canvas API spec, I'm just guessing the type here
+    /// Not specified in Canvas API spec, I&apos;m just guessing the type here
     /// </summary>
     public string? CourseColor { get; init; }
     /// <summary>
     /// 
     /// </summary> 
     /// <example>
-    /// "online"
+    /// &quot;online&quot;
     /// </example>
     public string? CourseFormat { get; init; }
     /// <summary>
@@ -112,10 +107,10 @@ public sealed partial record Course
     /// </example>
     public DateTime? CreatedAt { get; init; }
     /// <summary>
-    /// the type of page that users will see when they first visit the course - 'feed': Recent Activity Dashboard - 'wiki': Wiki Front Page - 'modules': Course Modules/Sections Page - 'assignments': Course Assignments List - 'syllabus': Course Syllabus Page other types may be added in the future
+    /// the type of page that users will see when they first visit the course - &apos;feed&apos;: Recent Activity Dashboard - &apos;wiki&apos;: Wiki Front Page - &apos;modules&apos;: Course Modules/Sections Page - &apos;assignments&apos;: Course Assignments List - &apos;syllabus&apos;: Course Syllabus Page other types may be added in the future
     /// </summary> 
     /// <example>
-    /// "feed"
+    /// &quot;feed&quot;
     /// </example>
     public string? DefaultView { get; init; }
     /// <summary>
@@ -131,20 +126,20 @@ public sealed partial record Course
     /// <example>
     /// 34
     /// </example>
-    public int? EnrollmentTermId { get; init; }
+    public TermIdentifier? EnrollmentTermId { get; init; }
     /// <summary>
     /// A list of enrollments linking the current user to the course. for student enrollments, grading information may be included if include[]=total_scores
     /// </summary>
     public IList<Enrollment>? Enrollments { get; init; }
     /// <summary>
-    /// Not specified in Canvas API spec, I'm just guessing the type here
+    /// Not specified in Canvas API spec, I&apos;m just guessing the type here
     /// </summary>
     public string? FriendlyName { get; init; }
     /// <summary>
     /// The grade_passback_setting on this course
     /// </summary> 
     /// <example>
-    /// "nightly_sync"
+    /// &quot;nightly_sync&quot;
     /// </example>
     public string? GradePassbackSetting { get; init; }
     /// <summary>
@@ -201,21 +196,21 @@ public sealed partial record Course
     /// 
     /// </summary> 
     /// <example>
-    /// "Creative Commons"
+    /// &quot;Creative Commons&quot;
     /// </example>
     public string? License { get; init; }
     /// <summary>
     /// the course-set locale, if applicable
     /// </summary> 
     /// <example>
-    /// "en"
+    /// &quot;en&quot;
     /// </example>
     public string? Locale { get; init; }
     /// <summary>
     /// the full name of the course
     /// </summary> 
     /// <example>
-    /// "InstructureCon 2012"
+    /// &quot;InstructureCon 2012&quot;
     /// </example>
     public string? Name { get; init; }
     /// <summary>
@@ -236,7 +231,7 @@ public sealed partial record Course
     /// 
     /// </summary> 
     /// <example>
-    /// "INSTCON12"
+    /// &quot;INSTCON12&quot;
     /// </example>
     public string? OriginalName { get; init; }
     /// <summary>
@@ -247,7 +242,7 @@ public sealed partial record Course
     /// optional: the public description of the course
     /// </summary> 
     /// <example>
-    /// "Come one, come all to InstructureCon 2012!"
+    /// &quot;Come one, come all to InstructureCon 2012!&quot;
     /// </example>
     public string? PublicDescription { get; init; }
     /// <summary>
@@ -277,7 +272,7 @@ public sealed partial record Course
     /// <example>
     /// 81259
     /// </example>
-    public int? RootAccountId { get; init; }
+    public AccountIdentifier? RootAccountId { get; init; }
     /// <summary>
     /// 
     /// </summary> 
@@ -295,7 +290,7 @@ public sealed partial record Course
     /// <example>
     /// 34
     /// </example>
-    public int? SisImportId { get; init; }
+    public  string ? SisImportId { get; init; }
     /// <summary>
     /// the start date for the course, if applicable
     /// </summary> 
@@ -321,7 +316,7 @@ public sealed partial record Course
     /// optional: user-generated HTML for the course syllabus
     /// </summary> 
     /// <example>
-    /// "<p>syllabus html goes here</p>"
+    /// &quot;&lt;p&gt;syllabus html goes here&lt;/p&gt;&quot;
     /// </example>
     public string? SyllabusBody { get; init; }
     /// <summary>
@@ -333,10 +328,10 @@ public sealed partial record Course
     /// </summary>
     public Term? Term { get; init; }
     /// <summary>
-    /// The course's IANA time zone name.
+    /// The course&apos;s IANA time zone name.
     /// </summary> 
     /// <example>
-    /// "America/Denver"
+    /// &quot;America/Denver&quot;
     /// </example>
     public string? TimeZone { get; init; }
     /// <summary>
@@ -350,14 +345,14 @@ public sealed partial record Course
     /// the UUID of the course
     /// </summary> 
     /// <example>
-    /// "WvAHhY5FINzq5IyRIJybGeiXyFkG3SqHUPb7jZY5"
+    /// &quot;WvAHhY5FINzq5IyRIJybGeiXyFkG3SqHUPb7jZY5&quot;
     /// </example>
     public string? Uuid { get; init; }
     /// <summary>
-    /// the current state of the course one of 'unpublished', 'available', 'completed', or 'deleted'
+    /// the current state of the course one of &apos;unpublished&apos;, &apos;available&apos;, &apos;completed&apos;, or &apos;deleted&apos;
     /// </summary> 
     /// <example>
-    /// "available"
+    /// &quot;available&quot;
     /// </example>
     public string? WorkflowState { get; init; }
 
@@ -368,7 +363,7 @@ public sealed partial record Course
         return new Course(client)
         {
             AccessRestrictedByDate = dto.AccessRestrictedByDate,
-            AccountId = dto.AccountId,
+            AccountId = AccountIdentifier.FromNullable(dto.AccountId),
             AllowStudentAssignmentEdits = dto.AllowStudentAssignmentEdits,
             AllowStudentForumAttachments = dto.AllowStudentForumAttachments,
             AllowWikiComments = dto.AllowWikiComments,
@@ -376,7 +371,7 @@ public sealed partial record Course
             Blueprint = dto.Blueprint,
             BlueprintRestrictions = dto.BlueprintRestrictions,
             BlueprintRestrictionsByObjectType = dto.BlueprintRestrictionsByObjectType,
-            //Calendar = CalendarLink.Form(dto.Calendar),
+            Calendar = CalendarLink.From(dto.Calendar),
             CourseCode = dto.CourseCode,
             CourseColor = dto.CourseColor,
             CourseFormat = dto.CourseFormat,
@@ -384,15 +379,15 @@ public sealed partial record Course
             CreatedAt = dto.CreatedAt,
             DefaultView = dto.DefaultView,
             EndAt = dto.EndAt,
-            EnrollmentTermId = dto.EnrollmentTermId,
-            //Enrollments = Enrollment.From(dto.Enrollments),
+            EnrollmentTermId = TermIdentifier.FromNullable(dto.EnrollmentTermId),
+            Enrollments = Enrollment.From(dto.Enrollments),
             FriendlyName = dto.FriendlyName,
             GradePassbackSetting = dto.GradePassbackSetting,
             GradingPeriods = GradingPeriod.From(dto.GradingPeriods),
             GradingStandardId = dto.GradingStandardId,
             HideFinalGrades = dto.HideFinalGrades,
             HomeroomCourse = dto.HomeroomCourse,
-            //Id = dto.Id == null ? AccountIdentifier.None : CourseIdentifier.From(dto.Id),
+            Id = dto.Id == null ? CourseIdentifier.None : CourseIdentifier.From(dto.Id),
             IntegrationId = dto.IntegrationId,
             IsPublic = dto.IsPublic,
             IsPublicToAuthUsers = dto.IsPublicToAuthUsers,
@@ -407,7 +402,7 @@ public sealed partial record Course
             PublicSyllabus = dto.PublicSyllabus,
             PublicSyllabusToAuth = dto.PublicSyllabusToAuth,
             RestrictEnrollmentsToCourseDates = dto.RestrictEnrollmentsToCourseDates,
-            RootAccountId = dto.RootAccountId,
+            RootAccountId = AccountIdentifier.FromNullable(dto.RootAccountId),
             SelfEnrollment = dto.SelfEnrollment,
             SisCourseId = dto.SisCourseId,
             SisImportId = dto.SisImportId,
@@ -428,7 +423,7 @@ public sealed partial record Course
     internal static IList<Course> From(ICourses client, IEnumerable<CourseDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(client, item)!)];
+            return[];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

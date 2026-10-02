@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Canvas.Client.Dtos;
 /// <summary>
@@ -100,7 +100,7 @@ internal sealed partial record EnrollmentDto
     public string? Role { get; init; }
 
     [JsonPropertyName("role_id")]
-    public int? RoleId { get; init; }
+    public  string ? RoleId { get; init; }
 
     [JsonPropertyName("root_account_id")]
     public int? RootAccountId { get; init; }
@@ -150,5 +150,5 @@ internal sealed partial record EnrollmentDto
     public UserDto? User { get; init; }
 
     [JsonPropertyName("user_id")]
-    public int? UserId { get; init; }
+    public  string ? UserId { get; init; }
 }

@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Rubric criteria entity definition.
@@ -22,28 +20,28 @@ public sealed partial record RubricCriteria
     /// 
     /// </summary> 
     /// <example>
-    /// "Criterion 1"
+    /// &quot;Criterion 1&quot;
     /// </example>
     public string? Description { get; init; }
     /// <summary>
     /// The id of rubric criteria.
     /// </summary> 
     /// <example>
-    /// "crit1"
+    /// &quot;crit1&quot;
     /// </example>
     public string? Id { get; init; }
     /// <summary>
     /// (Optional) The id of the learning outcome this criteria uses, if any.
     /// </summary> 
     /// <example>
-    /// "1234"
+    /// &quot;1234&quot;
     /// </example>
     public string? LearningOutcomeId { get; init; }
     /// <summary>
     /// 
     /// </summary> 
     /// <example>
-    /// "Criterion 1 more details"
+    /// &quot;Criterion 1 more details&quot;
     /// </example>
     public string? LongDescription { get; init; }
     /// <summary>
@@ -58,10 +56,10 @@ public sealed partial record RubricCriteria
     /// </summary>
     public IList<RubricRating>? Ratings { get; init; }
     /// <summary>
-    /// (Optional) The 3rd party vendor's GUID for the outcome this criteria references, if any.
+    /// (Optional) The 3rd party vendor&apos;s GUID for the outcome this criteria references, if any.
     /// </summary> 
     /// <example>
-    /// "abdsfjasdfne3jsdfn2"
+    /// &quot;abdsfjasdfne3jsdfn2&quot;
     /// </example>
     public string? VendorGuid { get; init; }
 
@@ -86,7 +84,7 @@ public sealed partial record RubricCriteria
     internal static IList<RubricCriteria> From(IEnumerable<RubricCriteriaDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(item)!)];
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

@@ -1,7 +1,6 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Canvas.Client.Dtos;
-
 /// <summary>
 /// A DTO for transferring Account entities.
 /// </summary>
@@ -18,7 +17,7 @@ internal sealed partial record AccountDto
 
     [JsonPropertyName("default_user_storage_quota_mb")]
     public int? DefaultUserStorageQuotaMb { get; init; }
-    public string? Id { get; init; }
+    public  string ? Id { get; init; }
 
     [JsonPropertyName("integration_id")]
     public string? IntegrationId { get; init; }
@@ -28,10 +27,10 @@ internal sealed partial record AccountDto
     public string? Name { get; init; }
 
     [JsonPropertyName("parent_account_id")]
-    public string? ParentAccountId { get; init; }
+    public  string ? ParentAccountId { get; init; }
 
     [JsonPropertyName("root_account_id")]
-    public string? RootAccountId { get; init; }
+    public  string ? RootAccountId { get; init; }
 
     [JsonPropertyName("sis_account_id")]
     public string? SisAccountId { get; init; }

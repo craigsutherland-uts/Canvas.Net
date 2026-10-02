@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Course progress entity definition.
@@ -22,7 +20,7 @@ public sealed partial record CourseProgress
     /// url to next module item that has an unmet requirement. null if the user has completed the course or the current module does not require sequential progress
     /// </summary> 
     /// <example>
-    /// "http://localhost/courses/1/modules/items/2"
+    /// &quot;http://localhost/courses/1/modules/items/2&quot;
     /// </example>
     public string? NextRequirementUrl { get; init; }
     /// <summary>
@@ -57,7 +55,7 @@ public sealed partial record CourseProgress
     internal static IList<CourseProgress> From(IEnumerable<CourseProgressDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(item)!)];
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

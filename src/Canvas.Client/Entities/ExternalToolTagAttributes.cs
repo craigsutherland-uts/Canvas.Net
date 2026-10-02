@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The External tool tag attributes entity definition.
@@ -22,14 +20,14 @@ public sealed partial record ExternalToolTagAttributes
     /// the identifier for this tool_tag
     /// </summary> 
     /// <example>
-    /// "ab81173af98b8c33e66a"
+    /// &quot;ab81173af98b8c33e66a&quot;
     /// </example>
     public string? ResourceLinkId { get; init; }
     /// <summary>
     /// URL to the external tool
     /// </summary> 
     /// <example>
-    /// "http://instructure.com"
+    /// &quot;http://instructure.com&quot;
     /// </example>
     public string? Url { get; init; }
 
@@ -44,5 +42,12 @@ public sealed partial record ExternalToolTagAttributes
             Url = dto.Url,
             _source = dto,
         };
+    }
+
+    internal static IList<ExternalToolTagAttributes> From(IEnumerable<ExternalToolTagAttributesDto>? dto)
+    {
+        if (dto == null)
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

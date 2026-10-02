@@ -1,7 +1,4 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
-
 /// <summary>
 /// The Lock info entity definition.
 /// </summary>
@@ -16,14 +13,14 @@ public sealed partial record LockInfo
     /// Asset string for the object causing the lock
     /// </summary> 
     /// <example>
-    /// "assignment_4"
+    /// &quot;assignment_4&quot;
     /// </example>
     public string? AssetString { get; init; }
     /// <summary>
     /// (Optional) Context module causing the lock.
     /// </summary> 
     /// <example>
-    /// "{}"
+    /// &quot;{}&quot;
     /// </example>
     public string? ContextModule { get; init; }
     /// <summary>
@@ -33,6 +30,9 @@ public sealed partial record LockInfo
     /// 2013-02-01T00:00:00.0000000-06:00
     /// </example>
     public DateTime? LockAt { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// True
     /// </example>
@@ -58,5 +58,12 @@ public sealed partial record LockInfo
             UnlockAt = dto.UnlockAt,
             _source = dto,
         };
+    }
+
+    internal static IList<LockInfo> From(IEnumerable<LockInfoDto>? dto)
+    {
+        if (dto == null)
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

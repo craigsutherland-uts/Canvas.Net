@@ -1,7 +1,6 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Canvas.Client.Dtos;
-
 /// <summary>
 /// A DTO for transferring Course entities.
 /// </summary>
@@ -11,7 +10,7 @@ internal sealed partial record CourseDto
     public bool? AccessRestrictedByDate { get; init; }
 
     [JsonPropertyName("account_id")]
-    public int? AccountId { get; init; }
+    public  string ? AccountId { get; init; }
 
     [JsonPropertyName("allow_student_assignment_edits")]
     public bool? AllowStudentAssignmentEdits { get; init; }
@@ -55,7 +54,7 @@ internal sealed partial record CourseDto
     public DateTime? EndAt { get; init; }
 
     [JsonPropertyName("enrollment_term_id")]
-    public int? EnrollmentTermId { get; init; }
+    public  string ? EnrollmentTermId { get; init; }
     public IList<EnrollmentDto>? Enrollments { get; init; }
 
     [JsonPropertyName("friendly_name")]
@@ -75,7 +74,7 @@ internal sealed partial record CourseDto
 
     [JsonPropertyName("homeroom_course")]
     public bool? HomeroomCourse { get; init; }
-    public int? Id { get; init; }
+    public  string ? Id { get; init; }
 
     [JsonPropertyName("integration_id")]
     public string? IntegrationId { get; init; }
@@ -112,7 +111,7 @@ internal sealed partial record CourseDto
     public bool? RestrictEnrollmentsToCourseDates { get; init; }
 
     [JsonPropertyName("root_account_id")]
-    public int? RootAccountId { get; init; }
+    public  string ? RootAccountId { get; init; }
 
     [JsonPropertyName("self_enrollment")]
     public bool? SelfEnrollment { get; init; }
@@ -121,7 +120,7 @@ internal sealed partial record CourseDto
     public string? SisCourseId { get; init; }
 
     [JsonPropertyName("sis_import_id")]
-    public int? SisImportId { get; init; }
+    public  string ? SisImportId { get; init; }
 
     [JsonPropertyName("start_at")]
     public DateTime? StartAt { get; init; }

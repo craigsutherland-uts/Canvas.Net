@@ -8,7 +8,8 @@ public sealed class ApiDefinition
     /// <summary>
     /// The entities in the API.
     /// </summary>
-    public IList<EntityDefinition> Entities { get; } = [];
+    public IDictionary<string, EntityDefinition> Entities { get; } 
+        = new Dictionary<string, EntityDefinition>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Defines the namespaces for the target project.
@@ -22,5 +23,6 @@ public sealed class ApiDefinition
     /// In the Canvas definitions, there are some type schemas that refer to the same conceptual entities
     /// (e.g., UserNullable and User). These aliases allow the code generator to handle these scenarios.
     /// </remarks>
-    public IDictionary<string, string> TypeAliases { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    public IDictionary<string, string> TypeAliases { get; } 
+        = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 }

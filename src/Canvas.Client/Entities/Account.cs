@@ -1,9 +1,3 @@
-﻿using Canvas.Client.Dtos;
-using Canvas.Client.Interfaces;
-using Canvas.Client.Internal;
-
-using CommunityToolkit.Diagnostics;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Account entity definition.
@@ -40,7 +34,7 @@ public sealed partial record Account
     /// The default time zone of the account. Allowed time zones are {http://www.iana.org/time-zones IANA time zones} or friendlier {http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html Ruby on Rails time zones}.
     /// </summary> 
     /// <example>
-    /// "America/Denver"
+    /// &quot;America/Denver&quot;
     /// </example>
     public string? DefaultTimeZone { get; init; }
     /// <summary>
@@ -58,28 +52,28 @@ public sealed partial record Account
     /// </example>
     public AccountIdentifier Id { get; init; }
     /// <summary>
-    /// The account's identifier in the Student Information System. Only included if the user has permission to view SIS information.
+    /// The account&apos;s identifier in the Student Information System. Only included if the user has permission to view SIS information.
     /// </summary> 
     /// <example>
-    /// "123xyz"
+    /// &quot;123xyz&quot;
     /// </example>
     public string? IntegrationId { get; init; }
     /// <summary>
-    /// The account's identifier that is sent as context_id in LTI launches.
+    /// The account&apos;s identifier that is sent as context_id in LTI launches.
     /// </summary> 
     /// <example>
-    /// "123xyz"
+    /// &quot;123xyz&quot;
     /// </example>
     public string? LtiGuid { get; init; }
     /// <summary>
     /// The display name of the account
     /// </summary> 
     /// <example>
-    /// "Canvas Account"
+    /// &quot;Canvas Account&quot;
     /// </example>
     public string? Name { get; init; }
     /// <summary>
-    /// The account's parent ID, or null if this is the root account
+    /// The account&apos;s parent ID, or null if this is the root account
     /// </summary> 
     /// <example>
     /// 1
@@ -93,10 +87,10 @@ public sealed partial record Account
     /// </example>
     public AccountIdentifier? RootAccountId { get; init; }
     /// <summary>
-    /// The account's identifier in the Student Information System. Only included if the user has permission to view SIS information.
+    /// The account&apos;s identifier in the Student Information System. Only included if the user has permission to view SIS information.
     /// </summary> 
     /// <example>
-    /// "123xyz"
+    /// &quot;123xyz&quot;
     /// </example>
     public string? SisAccountId { get; init; }
     /// <summary>
@@ -110,14 +104,14 @@ public sealed partial record Account
     /// The UUID of the account
     /// </summary> 
     /// <example>
-    /// "WvAHhY5FINzq5IyRIJybGeiXyFkG3SqHUPb7jZY5"
+    /// &quot;WvAHhY5FINzq5IyRIJybGeiXyFkG3SqHUPb7jZY5&quot;
     /// </example>
     public string? Uuid { get; init; }
     /// <summary>
-    /// The state of the account. Can be 'active' or 'deleted'.
+    /// The state of the account. Can be &apos;active&apos; or &apos;deleted&apos;.
     /// </summary> 
     /// <example>
-    /// "active"
+    /// &quot;active&quot;
     /// </example>
     public string? WorkflowState { get; init; }
 
@@ -148,7 +142,7 @@ public sealed partial record Account
     internal static IList<Account> From(IAccounts client, IEnumerable<AccountDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(client, item)!)];
+            return[];
+        return[..dto.Select(item => From(client, item)!)];
     }
 }

@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Calendar link entity definition.
@@ -15,7 +13,7 @@ public sealed partial record CalendarLink
     /// The URL of the calendar in ICS format
     /// </summary> 
     /// <example>
-    /// "https://canvas.instructure.com/feeds/calendars/course_abcdef.ics"
+    /// &quot;https://canvas.instructure.com/feeds/calendars/course_abcdef.ics&quot;
     /// </example>
     public string? Ics { get; init; }
 
@@ -33,7 +31,7 @@ public sealed partial record CalendarLink
     internal static IList<CalendarLink> From(IEnumerable<CalendarLinkDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(item)!)];
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

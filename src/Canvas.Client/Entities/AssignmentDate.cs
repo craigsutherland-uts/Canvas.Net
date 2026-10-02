@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Assignment date entity definition.
@@ -12,7 +10,7 @@ public sealed partial record AssignmentDate
     /// </summary>
     public bool IsNew => _source == null;
     /// <summary>
-    /// (Optional, present if 'id' is missing) whether this date represents the assignment's or quiz's default due date
+    /// (Optional, present if &apos;id&apos; is missing) whether this date represents the assignment&apos;s or quiz&apos;s default due date
     /// </summary> 
     /// <example>
     /// True
@@ -26,7 +24,7 @@ public sealed partial record AssignmentDate
     /// </example>
     public DateTime? DueAt { get; init; }
     /// <summary>
-    /// (Optional, missing if 'base' is present) id of the assignment override this date represents
+    /// (Optional, missing if &apos;base&apos; is present) id of the assignment override this date represents
     /// </summary> 
     /// <example>
     /// 1
@@ -43,7 +41,7 @@ public sealed partial record AssignmentDate
     /// 
     /// </summary> 
     /// <example>
-    /// "Summer Session"
+    /// &quot;Summer Session&quot;
     /// </example>
     public string? Title { get; init; }
     /// <summary>
@@ -73,7 +71,7 @@ public sealed partial record AssignmentDate
     internal static IList<AssignmentDate> From(IEnumerable<AssignmentDateDto>? dto)
     {
         if (dto == null)
-            return [];
-        return [.. dto.Select(item => From(item)!)];
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }

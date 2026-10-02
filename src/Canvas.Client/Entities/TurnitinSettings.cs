@@ -1,5 +1,3 @@
-﻿using Canvas.Client.Dtos;
-
 namespace Canvas.Client.Entities;
 /// <summary>
 /// The Turnitin settings entity definition.
@@ -11,34 +9,58 @@ public sealed partial record TurnitinSettings
     /// A flag indicating whether the TurnitinSettings is new or retrieved from Canvas.
     /// </summary>
     public bool IsNew => _source == null;
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// False
     /// </example>
     public bool? ExcludeBiblio { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// False
     /// </example>
     public bool? ExcludeQuoted { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
-    /// "percent"
+    /// &quot;percent&quot;
     /// </example>
     public string? ExcludeSmallMatchesType { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// 50
     /// </example>
     public int? ExcludeSmallMatchesValue { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// False
     /// </example>
     public bool? InternetCheck { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// False
     /// </example>
     public bool? JournalCheck { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
-    /// "after_grading"
+    /// &quot;after_grading&quot;
     /// </example>
     public string? OriginalityReportVisibility { get; init; }
+    /// <summary>
+    /// 
+    /// </summary> 
     /// <example>
     /// False
     /// </example>
@@ -60,5 +82,12 @@ public sealed partial record TurnitinSettings
             SPaperCheck = dto.SPaperCheck,
             _source = dto,
         };
+    }
+
+    internal static IList<TurnitinSettings> From(IEnumerable<TurnitinSettingsDto>? dto)
+    {
+        if (dto == null)
+            return[];
+        return[..dto.Select(item => From(item)!)];
     }
 }
