@@ -1,10 +1,14 @@
 ﻿using Canvas.Client.Entities;
 using Canvas.Client.Interfaces;
+
 using CommunityToolkit.Diagnostics;
+
 using Microsoft.Extensions.Logging;
+
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace Canvas.Client.Implementations;
@@ -106,14 +110,56 @@ public sealed class HttpConnection
             CancellationToken cancellationToken)
         where TEntity : class
     {
-        var response = await Get(url, throwExceptionOnFailure: false, cancellationToken)
+        var fullUrl = url;
+        _logger.LogDebug("Getting {type} from {url}", typeof(TEntity).Name, fullUrl);
+
+        // Retrieve the response from the server
+        var response = await Get(fullUrl, throwExceptionOnFailure: false, cancellationToken)
             .ConfigureAwait(false);
         if (!response.IsSuccessStatusCode) return null;
+
+        // Deserialise the response into the entity type
         var item = await response.Content.ReadFromJsonAsync<TEntity>(
                 JsonConstants.DefaultOptions,
                 cancellationToken)
             .ConfigureAwait(false);
         return item;
+    }
+
+    /// <summary>
+    /// Perform a GET operation and deserialise the response.
+    /// </summary>
+    /// <typeparam name="TEntity">The type of entity to deserialise.</typeparam>
+    /// <param name="url">The URL to GET.</param>
+    /// <param name="options">The options to pass to the URL.</param>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    /// <returns>The deserialised entity if valid; <see langword="null"/> otherwise.</returns>
+    public async IAsyncEnumerable<TEntity?> ListEntities<TEntity>(
+        string url, 
+        ICanvasOptions options, 
+        [EnumeratorCancellation] CancellationToken cancellationToken)
+            where TEntity : class
+    {
+        var fullUrl = url;
+        _logger.LogDebug("Listing {type} from {url}", typeof(TEntity).Name, fullUrl);
+        while (!string.IsNullOrEmpty(fullUrl))
+        {
+            // Retrieve the response from the server
+            var response = await Get(fullUrl, throwExceptionOnFailure: true, cancellationToken)
+                .ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode) yield break;
+
+            // Deserialise the response into the entity type and return each item
+            var items = await response.Content.ReadFromJsonAsync<TEntity[]>(
+                    JsonConstants.DefaultOptions,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            if (items == null) yield break;
+            foreach (var item in items) yield return item;
+
+            // Retrieve the next link from the response headers and continue if it exists
+            fullUrl = response.Headers.GetNextLink();
+        }
     }
 
     /// <summary>
@@ -146,9 +192,9 @@ public sealed class HttpConnection
     private static double? CheckForNumericHeaderValue(HttpResponseMessage response, string key)
     {
         var header = response.Headers.FirstOrDefault(h => string.Equals(h.Key, key, StringComparison.OrdinalIgnoreCase));
-        return (header.Value == null 
-            || !header.Value.Any() 
-            || !double.TryParse(header.Value.First(), System.Globalization.CultureInfo.InvariantCulture, out var value)) 
+        return (header.Value == null
+            || !header.Value.Any()
+            || !double.TryParse(header.Value.First(), System.Globalization.CultureInfo.InvariantCulture, out var value))
             ? null
             : value;
     }
@@ -239,8 +285,8 @@ public sealed class HttpConnection
         {
             // Ignore any errors - this method is only checking for Canvas errors
         }
-        if (error != null) throw error;
-        return error;
+
+        return error != null ? throw error : error;
     }
 
     /// <summary>

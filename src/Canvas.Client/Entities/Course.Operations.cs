@@ -10,6 +10,7 @@ namespace Canvas.Client.Entities;
 public partial record Course
 {
     private Lazy<IAssignments> _assignments = new();
+    private Lazy<IAssignmentGroups> _assignmentGroups = new();
 
     partial void Initialise()
     {
@@ -19,12 +20,23 @@ public partial record Course
             client.CourseIdentifier = Id;
             return client;
         });
+        _assignmentGroups = new(() =>
+        {
+            var client = ((StandardClient)_client).Services.GetRequiredService<IAssignmentGroups>();
+            client.CourseIdentifier = Id;
+            return client;
+        });
     }
 
     /// <summary>
     /// The assignments for this course.
     /// </summary>
     public IAssignments Assignments => _assignments.Value;
+
+    /// <summary>
+    /// The assignment groups for this course.
+    /// </summary>
+    public IAssignmentGroups AssignmentGroups => _assignmentGroups.Value;
 
     /// <summary>
     /// Refreshes the details from Canvas.

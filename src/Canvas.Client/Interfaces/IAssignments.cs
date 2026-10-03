@@ -13,6 +13,13 @@ public interface IAssignments
     CourseIdentifier? CourseIdentifier { get; set; }
 
     /// <summary>
+    /// Lists the assignments for the associated course.
+    /// </summary>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    /// <returns>An <see cref="IAsyncEnumerable{Assignment}"/> containing the assignments.</returns>
+    IAsyncEnumerable<Assignment?> List(CancellationToken cancellationToken);
+
+    /// <summary>
     /// Starts a new <see cref="Assignment"/> instance.
     /// </summary>
     /// <returns>A new <see cref="Assignment"/> instance.</returns>

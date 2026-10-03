@@ -17,7 +17,7 @@ internal class Program
             .CreateLogger();
         var loggerFactory = new SerilogLoggerFactory(serilogLogger);
         var rootLogger = loggerFactory.CreateLogger<Program>();
-        var mode = 2;
+        var mode = 1;
 
         var tokenSource = new CancellationTokenSource();
         var cancellationToken = tokenSource.Token;
@@ -83,11 +83,10 @@ internal class Program
             else
             {
                 rootLogger.LogInformation("Course details: {course}", item);
-                var assignment = await item.Assignments.Retrieve(
-                        AssignmentIdentifier.From("295195"),
-                        cancellationToken)
-                    .ConfigureAwait(false);
-                rootLogger.LogInformation("Assignment details: {assignment}", assignment);
+                await foreach (var assignment in item.Assignments.List(cancellationToken).ConfigureAwait(false))
+                {
+                    rootLogger.LogInformation("Assignment: {assignment}", assignment);
+                }
             }
 
             var test = client.Courses.New();
