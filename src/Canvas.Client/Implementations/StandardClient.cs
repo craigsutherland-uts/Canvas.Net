@@ -31,4 +31,6 @@ public sealed class StandardClient(IServiceProvider services)
     /// The root-level user functionality.
     /// </summary>
     public IUsers Users => _users.Value;
+
+    internal IServiceProvider Services => services;
 }

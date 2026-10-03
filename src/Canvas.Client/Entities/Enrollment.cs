@@ -10,8 +10,10 @@ public sealed partial record Enrollment
     {
         Guard.IsNotNull(client);
         _client = client;
+        Initialise();
     }
 
+    partial void Initialise();
     /// <summary>
     /// A flag indicating whether the Enrollment is new or retrieved from Canvas.
     /// </summary>

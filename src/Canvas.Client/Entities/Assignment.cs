@@ -10,8 +10,10 @@ public sealed partial record Assignment
     {
         Guard.IsNotNull(client);
         _client = client;
+        Initialise();
     }
 
+    partial void Initialise();
     /// <summary>
     /// A flag indicating whether the Assignment is new or retrieved from Canvas.
     /// </summary>
@@ -40,7 +42,7 @@ public sealed partial record Assignment
     /// <example>
     /// 2
     /// </example>
-    public int? AssignmentGroupId { get; init; }
+    public AssignmentGroupIdentifier? AssignmentGroupId { get; init; }
     /// <summary>
     /// (Optional) If &apos;assignment_visibility&apos; is included in the &apos;include&apos; parameter, includes an array of student IDs who can see this assignment.
     /// </summary> 
@@ -61,7 +63,7 @@ public sealed partial record Assignment
     /// <example>
     /// 123
     /// </example>
-    public int? CourseId { get; init; }
+    public CourseIdentifier CourseId { get; init; }
     /// <summary>
     /// The time at which this assignment was originally created
     /// </summary> 
@@ -167,7 +169,7 @@ public sealed partial record Assignment
     /// <example>
     /// 4
     /// </example>
-    public int? Id { get; init; }
+    public AssignmentIdentifier Id { get; init; }
     /// <summary>
     /// (optional, Third Party integration data for assignment)
     /// </summary>
@@ -295,7 +297,7 @@ public sealed partial record Assignment
     /// <example>
     /// 12
     /// </example>
-    public int? PointsPossible { get; init; }
+    public  double ? PointsPossible { get; init; }
     /// <summary>
     /// the sorting order of the assignment in the group
     /// </summary> 
@@ -402,10 +404,10 @@ public sealed partial record Assignment
             AllDates = AssignmentDate.From(client, dto.AllDates),
             AllowedExtensions = dto.AllowedExtensions,
             AnonymousSubmissions = dto.AnonymousSubmissions,
-            AssignmentGroupId = dto.AssignmentGroupId,
+            AssignmentGroupId = AssignmentGroupIdentifier.FromNullable(dto.AssignmentGroupId),
             AssignmentVisibility = dto.AssignmentVisibility,
             AutomaticPeerReviews = dto.AutomaticPeerReviews,
-            CourseId = dto.CourseId,
+            CourseId = dto.CourseId == null ? CourseIdentifier.None : CourseIdentifier.From(dto.CourseId),
             CreatedAt = dto.CreatedAt,
             Description = dto.Description,
             DueAt = dto.DueAt,
@@ -421,7 +423,7 @@ public sealed partial record Assignment
             HasOverrides = dto.HasOverrides,
             HasSubmittedSubmissions = dto.HasSubmittedSubmissions,
             HtmlUrl = dto.HtmlUrl,
-            Id = dto.Id,
+            Id = dto.Id == null ? AssignmentIdentifier.None : AssignmentIdentifier.From(dto.Id),
             IntegrationData = dto.IntegrationData,
             IntegrationId = dto.IntegrationId,
             IntraGroupPeerReviews = dto.IntraGroupPeerReviews,

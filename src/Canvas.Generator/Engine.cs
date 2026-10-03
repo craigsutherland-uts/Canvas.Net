@@ -111,7 +111,13 @@ public sealed class Engine
         {
             members.AddRange(
                 GenerateField(IdentifierName("ICanvasClient"), "_client", true, false),
-                GenerateConstructor(className, "ICanvasClient"));
+                GenerateConstructor(className, "ICanvasClient"),
+                MethodDeclaration(
+                        PredefinedType(Token(SyntaxKind.VoidKeyword)),
+                        Identifier("Initialise"))
+                    .WithModifiers(
+                        TokenList(Token(SyntaxKind.PartialKeyword)))
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
         }
         members.Add(GenerateIsNewProperty(className));
 
@@ -293,7 +299,10 @@ public sealed class Engine
                             AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 IdentifierName("_client"),
-                                IdentifierName("client")))));
+                                IdentifierName("client"))),
+                        ExpressionStatement(
+                            InvocationExpression(
+                                IdentifierName("Initialise")))));
     }
 
 

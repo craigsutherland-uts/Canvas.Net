@@ -54,7 +54,7 @@ public sealed class CanvasClientFactory
         // Add the registered clients
         foreach (var (service, implementation) in _canvasClients.Value)
         {
-            services.AddSingleton(service, implementation);
+            services.AddTransient(service, implementation);
         }
 
         // Generate the root client and return it

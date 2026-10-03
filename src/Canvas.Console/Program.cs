@@ -17,7 +17,7 @@ internal class Program
             .CreateLogger();
         var loggerFactory = new SerilogLoggerFactory(serilogLogger);
         var rootLogger = loggerFactory.CreateLogger<Program>();
-        var mode = 1;
+        var mode = 2;
 
         var tokenSource = new CancellationTokenSource();
         var cancellationToken = tokenSource.Token;
@@ -71,23 +71,27 @@ internal class Program
         try
         {
             var client = factory.Get(settings.CanvasUrl, settings.CanvasToken);
-            var userId = UserIdentifier.From("39479");
-            var item = await client.Users.RetrieveSelf(
+            var courseId = CourseIdentifier.From("39479");
+            var item = await client.Courses.Retrieve(
+                    courseId,
                     cancellationToken)
                 .ConfigureAwait(false);
             if (item == null)
             {
-                rootLogger.LogWarning("Unable to retrieve user {id}", userId);
+                rootLogger.LogWarning("Unable to retrieve course {id}", courseId);
             }
             else
             {
-                // Not needed, but let's test the Refresh() method
-                item = await item.Refresh(cancellationToken).ConfigureAwait(false);
-                rootLogger.LogInformation("User details: {user}", item);
+                rootLogger.LogInformation("Course details: {course}", item);
+                var assignment = await item.Assignments.Retrieve(
+                        AssignmentIdentifier.From("295195"),
+                        cancellationToken)
+                    .ConfigureAwait(false);
+                rootLogger.LogInformation("Assignment details: {assignment}", assignment);
             }
 
-            var test = client.Users.New();
-            rootLogger.LogInformation("Started new user");
+            var test = client.Courses.New();
+            rootLogger.LogInformation("Started new course");
         }
         catch (Exception ex)
         {

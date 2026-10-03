@@ -8,6 +8,11 @@ namespace Canvas.Client.Interfaces;
 public interface IAssignments
 {
     /// <summary>
+    /// The identifier of the associated course.
+    /// </summary>
+    CourseIdentifier? CourseIdentifier { get; set; }
+
+    /// <summary>
     /// Starts a new <see cref="Assignment"/> instance.
     /// </summary>
     /// <returns>A new <see cref="Assignment"/> instance.</returns>

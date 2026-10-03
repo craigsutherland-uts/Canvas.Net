@@ -10,8 +10,10 @@ public sealed partial record CalendarLink
     {
         Guard.IsNotNull(client);
         _client = client;
+        Initialise();
     }
 
+    partial void Initialise();
     /// <summary>
     /// A flag indicating whether the CalendarLink is new or retrieved from Canvas.
     /// </summary>

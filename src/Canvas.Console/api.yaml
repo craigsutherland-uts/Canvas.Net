@@ -28,11 +28,27 @@
         from: From
         fromClient: true
         fromType: AssignmentDate
+      AssignmentGroupId:
+        type: AssignmentGroupIdentifier
+        dto: string
+        from: FromNullable
+      CourseId:
+        type: CourseIdentifier
+        dto: string
+        from: From
+        nullable: false
+        nullValue: CourseIdentifier.None
       DiscussionTopic:
         skip: true
       ExternalToolTagAttributes:
         from: From
         fromClient: true
+      Id:
+        type: AssignmentIdentifier
+        dto: string
+        from: From
+        nullable: false
+        nullValue: AssignmentIdentifier.None
       LockInfo:
         from: From
         fromClient: true
@@ -44,6 +60,9 @@
         from: From
         fromClient: true
         fromType: AssignmentOverride
+      PointsPossible:
+        type: double
+        dto: double
       Rubric:
         from: From
         fromClient: true
@@ -57,6 +76,17 @@
         from: From
         fromClient: true
   AssignmentDate: {}
+  AssignmentGroup:
+    properties:
+      Id:
+        type: AssignmentGroupIdentifier
+        dto: string
+        from: From
+        nullable: false
+        nullValue: AssignmentGroupIdentifier.None
+      Rules:
+        from: From
+        fromClient: true
   AssignmentOverride: {}
   CalendarLink: {}
   Course:
@@ -121,6 +151,7 @@
   ExternalToolTagAttributes: {}
   Grade: {}
   GradingPeriod: {}
+  GradingRules: {}
   LockInfo: {}
   NeedsGradingCount:
     properties:

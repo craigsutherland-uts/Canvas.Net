@@ -10,8 +10,10 @@ public sealed partial record LockInfo
     {
         Guard.IsNotNull(client);
         _client = client;
+        Initialise();
     }
 
+    partial void Initialise();
     /// <summary>
     /// A flag indicating whether the LockInfo is new or retrieved from Canvas.
     /// </summary>

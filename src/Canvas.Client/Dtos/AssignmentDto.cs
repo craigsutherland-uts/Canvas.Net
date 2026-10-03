@@ -16,7 +16,7 @@ internal sealed partial record AssignmentDto
     public bool? AnonymousSubmissions { get; init; }
 
     [JsonPropertyName("assignment_group_id")]
-    public int? AssignmentGroupId { get; init; }
+    public  string ? AssignmentGroupId { get; init; }
 
     [JsonPropertyName("assignment_visibility")]
     public IList<int>? AssignmentVisibility { get; init; }
@@ -25,7 +25,7 @@ internal sealed partial record AssignmentDto
     public bool? AutomaticPeerReviews { get; init; }
 
     [JsonPropertyName("course_id")]
-    public int? CourseId { get; init; }
+    public  string ? CourseId { get; init; }
 
     [JsonPropertyName("created_at")]
     public DateTime? CreatedAt { get; init; }
@@ -67,7 +67,7 @@ internal sealed partial record AssignmentDto
 
     [JsonPropertyName("html_url")]
     public string? HtmlUrl { get; init; }
-    public int? Id { get; init; }
+    public  string ? Id { get; init; }
 
     [JsonPropertyName("integration_data")]
     public object? IntegrationData { get; init; }
@@ -121,7 +121,7 @@ internal sealed partial record AssignmentDto
     public DateTime? PeerReviewsAssignAt { get; init; }
 
     [JsonPropertyName("points_possible")]
-    public int? PointsPossible { get; init; }
+    public  double ? PointsPossible { get; init; }
     public int? Position { get; init; }
 
     [JsonPropertyName("post_to_sis")]

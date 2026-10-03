@@ -1,10 +1,31 @@
 ﻿using System.Diagnostics;
 
+using Canvas.Client.Implementations;
+
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Canvas.Client.Entities;
 
 [DebuggerDisplay($"{{{nameof(Name)}}} [{{{nameof(Id)}.ToString()}}]")]
 public partial record Course
 {
+    private Lazy<IAssignments> _assignments = new();
+
+    partial void Initialise()
+    {
+        _assignments = new(() =>
+        {
+            var client = ((StandardClient)_client).Services.GetRequiredService<IAssignments>();
+            client.CourseIdentifier = Id;
+            return client;
+        });
+    }
+
+    /// <summary>
+    /// The assignments for this course.
+    /// </summary>
+    public IAssignments Assignments => _assignments.Value;
+
     /// <summary>
     /// Refreshes the details from Canvas.
     /// </summary>
