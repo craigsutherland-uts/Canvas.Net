@@ -1,6 +1,4 @@
-﻿using Canvas.Client.Interfaces;
-
-namespace Canvas.Client;
+﻿namespace Canvas.Client;
 
 /// <summary>
 /// A connection to a Canvas instance.
@@ -15,7 +13,7 @@ public interface ICanvasConnection
     /// <param name="options">The options to pass to the URL.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
     /// <returns>The deserialised entity if valid; <see langword="null"/> otherwise.</returns>
-    Task<TEntity?> GetEntity<TEntity>(string url, ICanvasOptions options, CancellationToken cancellationToken)
+    Task<TEntity?> GetEntity<TEntity>(string url, CanvasOptions options, CancellationToken cancellationToken)
         where TEntity : class;
 
     /// <summary>
@@ -26,6 +24,6 @@ public interface ICanvasConnection
     /// <param name="options">The options to pass to the URL.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
     /// <returns>The deserialised entity if valid; <see langword="null"/> otherwise.</returns>
-    IAsyncEnumerable<TEntity?> ListEntities<TEntity>(string url, ICanvasOptions options, CancellationToken cancellationToken)
+    IAsyncEnumerable<TEntity?> ListEntities<TEntity>(string url, CanvasOptions options, CancellationToken cancellationToken)
         where TEntity : class;
 }

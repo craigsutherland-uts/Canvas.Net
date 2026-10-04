@@ -12,13 +12,11 @@ namespace Canvas.Client.Implementations;
 /// <param name="parent">The parent <see cref="ICanvasClient"/>.</param>
 /// <param name="connection">The <see cref="ICanvasConnection"/> instance to use.</param>
 /// <param name="logger">A <see cref="ILogger"/> for logging any messages.</param>
-/// <param name="options">The <see cref="ICanvasOptions"/> to use when connecting to Canvas.</param>
 [CanvasClient<IUsers>]
 public sealed class StandardUsersClient(
         ICanvasClient parent,
         ICanvasConnection connection,
-        ILogger<StandardUsersClient> logger,
-        ICanvasOptions options)
+        ILogger<StandardUsersClient> logger)
     : IUsers
 {
     /// <summary>
@@ -44,7 +42,7 @@ public sealed class StandardUsersClient(
         logger.LogDebug("Retrieving user with id {id}", identifier);
         var dto = await connection.GetEntity<UserDto>(
                 string.Create(CultureInfo.InvariantCulture, $"/api/v1/users/{identifier}"),
-                options,
+                CanvasOptions.New(),
                 cancellationToken)
             .ConfigureAwait(false);
         return User.From(parent, dto);

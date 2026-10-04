@@ -43,7 +43,6 @@ public sealed class CanvasClientFactory
         // Add the default options
         services
             .AddHttpClient()
-            .AddSingleton<ICanvasOptions, StandardCanvasOptions>()
             .AddSingleton<ICanvasConnection>(sp => new HttpConnection(
                 apiUrl,
                 apiKey,

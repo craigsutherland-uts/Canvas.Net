@@ -1,7 +1,4 @@
 ﻿using Canvas.Client.Entities;
-using Canvas.Client.Interfaces;
-
-using CommunityToolkit.Diagnostics;
 
 using Microsoft.Extensions.Logging;
 
@@ -106,11 +103,11 @@ public sealed class HttpConnection
     /// <returns>The deserialised entity if valid; <see langword="null"/> otherwise.</returns>
     public async Task<TEntity?> GetEntity<TEntity>(
             string url,
-            ICanvasOptions options,
+            CanvasOptions options,
             CancellationToken cancellationToken)
         where TEntity : class
     {
-        var fullUrl = url;
+        var fullUrl = url + options.ToQueryString();
         _logger.LogDebug("Getting {type} from {url}", typeof(TEntity).Name, fullUrl);
 
         // Retrieve the response from the server
@@ -135,12 +132,12 @@ public sealed class HttpConnection
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
     /// <returns>The deserialised entity if valid; <see langword="null"/> otherwise.</returns>
     public async IAsyncEnumerable<TEntity?> ListEntities<TEntity>(
-        string url, 
-        ICanvasOptions options, 
+        string url,
+        CanvasOptions options,
         [EnumeratorCancellation] CancellationToken cancellationToken)
             where TEntity : class
     {
-        var fullUrl = url;
+        var fullUrl = url + options.ToQueryString();
         _logger.LogDebug("Listing {type} from {url}", typeof(TEntity).Name, fullUrl);
         while (!string.IsNullOrEmpty(fullUrl))
         {

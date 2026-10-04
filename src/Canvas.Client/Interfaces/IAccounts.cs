@@ -8,6 +8,21 @@ namespace Canvas.Client.Interfaces;
 public interface IAccounts
 {
     /// <summary>
+    /// Lists the accounts for the user.
+    /// </summary>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    /// <returns>An <see cref="IAsyncEnumerable{Account}"/> containing the accounts.</returns>
+    IAsyncEnumerable<Account?> List(CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Lists the accounts for the user.
+    /// </summary>
+    /// <param name="options">The options for the request.</param>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    /// <returns>An <see cref="IAsyncEnumerable{Account}"/> containing the accounts.</returns>
+    IAsyncEnumerable<Account?> List(CanvasOptions options, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Starts a new <see cref="Account"/> instance.
     /// </summary>
     /// <returns>A new <see cref="Account"/> instance.</returns>

@@ -13,13 +13,11 @@ namespace Canvas.Client.Implementations;
 /// <param name="parent">The parent <see cref="ICanvasClient"/>.</param>
 /// <param name="connection">The <see cref="ICanvasConnection"/> instance to use.</param>
 /// <param name="logger">A <see cref="ILogger"/> for logging any messages.</param>
-/// <param name="options">The <see cref="ICanvasOptions"/> to use when connecting to Canvas.</param>
 [CanvasClient<IAssignmentGroups>]
 public sealed class StandardAssignmentGroupsClient(
         ICanvasClient parent,
         ICanvasConnection connection,
-        ILogger<StandardAssignmentGroupsClient> logger,
-        ICanvasOptions options)
+        ILogger<StandardAssignmentGroupsClient> logger)
     : IAssignmentGroups
 {
     /// <summary>
@@ -38,7 +36,7 @@ public sealed class StandardAssignmentGroupsClient(
         logger.LogDebug("Listing assignment groups from course {courseId}", CourseIdentifier);
         await foreach (var dto in connection.ListEntities<AssignmentGroupDto>(
                 string.Create(CultureInfo.InvariantCulture, $"/api/v1/courses/{CourseIdentifier}/assignment_groups"),
-                options,
+                CanvasOptions.New(),
                 cancellationToken)
             .ConfigureAwait(false))
         {
@@ -71,7 +69,7 @@ public sealed class StandardAssignmentGroupsClient(
         logger.LogDebug("Retrieving assignment group with id {id}", identifier);
         var dto = await connection.GetEntity<AssignmentGroupDto>(
                 string.Create(CultureInfo.InvariantCulture, $"/api/v1/courses/{CourseIdentifier}/assignment_groups/{identifier}"),
-                options,
+                CanvasOptions.New(),
                 cancellationToken)
             .ConfigureAwait(false);
         return ParseDto(dto);

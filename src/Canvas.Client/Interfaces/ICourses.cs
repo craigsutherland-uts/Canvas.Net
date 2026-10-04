@@ -8,6 +8,23 @@ namespace Canvas.Client.Interfaces;
 public interface ICourses
 {
     /// <summary>
+    /// Lists the courses for the user.
+    /// </summary>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    /// <returns>An <see cref="IAsyncEnumerable{Course}"/> containing the courses.</returns>
+    IAsyncEnumerable<Course?> List(CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Lists the courses for the user.
+    /// </summary>
+    /// <param name="options">The options for the request.</param>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    /// <returns>An <see cref="IAsyncEnumerable{Course}"/> containing the courses.</returns>
+    IAsyncEnumerable<Course?> List(
+        CanvasOptions options,
+        CancellationToken cancellationToken);
+
+    /// <summary>
     /// Starts a new <see cref="Course"/> instance.
     /// </summary>
     /// <returns>A new <see cref="Course"/> instance.</returns>

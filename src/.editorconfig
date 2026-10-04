@@ -389,3 +389,4 @@ dotnet_naming_style.s_camelcase.capitalization = camel_case
 
 # Meziantou.Analyzer settings
 MA0051.maximum_lines_per_method = 90
+MA0062.allow_all_bits_set_value = true

@@ -1,7 +1,10 @@
 ﻿using Canvas.Client;
 using Canvas.Client.Entities;
+using Canvas.Client.Options;
 using Canvas.Generator;
+
 using Microsoft.Extensions.Logging;
+
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -71,26 +74,14 @@ internal class Program
         try
         {
             var client = factory.Get(settings.CanvasUrl, settings.CanvasToken);
-            var courseId = CourseIdentifier.From("39479");
-            var item = await client.Courses.Retrieve(
-                    courseId,
-                    cancellationToken)
-                .ConfigureAwait(false);
-            if (item == null)
+            await foreach (var course in client.Courses.List(
+                CanvasOptions.New().WithInclude(CourseInclude.Account).WithPageSize(100),
+                cancellationToken)
+            .ConfigureAwait(false))
             {
-                rootLogger.LogWarning("Unable to retrieve course {id}", courseId);
-            }
-            else
-            {
-                rootLogger.LogInformation("Course details: {course}", item);
-                await foreach (var assignment in item.Assignments.List(cancellationToken).ConfigureAwait(false))
-                {
-                    rootLogger.LogInformation("Assignment: {assignment}", assignment);
-                }
+                rootLogger.LogInformation("Course: {name} [{id}]", course?.Name, course?.Id);
             }
 
-            var test = client.Courses.New();
-            rootLogger.LogInformation("Started new course");
         }
         catch (Exception ex)
         {
