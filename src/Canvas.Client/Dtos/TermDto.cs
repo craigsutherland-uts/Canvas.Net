@@ -8,7 +8,7 @@ internal sealed partial record TermDto
 {
     [JsonPropertyName("end_at")]
     public DateTime? EndAt { get; init; }
-    public int? Id { get; init; }
+    public  string ? Id { get; init; }
     public string? Name { get; init; }
 
     [JsonPropertyName("start_at")]

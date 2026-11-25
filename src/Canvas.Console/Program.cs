@@ -20,6 +20,10 @@ internal class Program
             .CreateLogger();
         var loggerFactory = new SerilogLoggerFactory(serilogLogger);
         var rootLogger = loggerFactory.CreateLogger<Program>();
+
+        // Modes:
+        // 1 = test Canvas client
+        // 2 = generate code
         var mode = 1;
 
         var tokenSource = new CancellationTokenSource();
@@ -42,6 +46,7 @@ internal class Program
         var engine = new Engine
         {
             Logger = loggerFactory.CreateLogger<Engine>(),
+            
         };
         await engine.Initialise(
                 "canvas.yaml",
@@ -53,7 +58,7 @@ internal class Program
         try
         {
             await engine.GenerateEntities(
-                    "Code",
+                    "C:\\Repos\\Canvas.Net\\src\\Canvas.Client",
                     cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -75,7 +80,7 @@ internal class Program
         {
             var client = factory.Get(settings.CanvasUrl, settings.CanvasToken);
             await foreach (var course in client.Courses.List(
-                CanvasOptions.New().WithInclude(CourseInclude.Account).WithPageSize(100),
+                CanvasOptions.New().WithInclude(CourseInclude.All).WithPageSize(100).WithMasquerading(UserIdentifier.From(80591)),
                 cancellationToken)
             .ConfigureAwait(false))
             {

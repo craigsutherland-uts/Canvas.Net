@@ -9,7 +9,7 @@
 /// <param name="url">The URL called.</param>
 /// <param name="innerException">An inner <see cref="Exception"/> instance.</param>
 public class UnauthorizedException(string url, Exception? innerException)
-        : ConnectionException(url, "The connection has not been authorised.", innerException)
+        : ConnectionException(url, Errors.UnauthorizedException, innerException)
 {
     /// <summary>
     /// Initialise a new <see cref="UnauthorizedException"/> instance.

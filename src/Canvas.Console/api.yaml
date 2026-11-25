@@ -113,6 +113,9 @@
         from: From
         fromClient: true
         fromType: GradingPeriod
+      GradingStandardId:
+        type: string
+        dto: string
       Id:
         type: CourseIdentifier
         dto: string
@@ -165,7 +168,14 @@
         fromType: RubricRating
   RubricRating: {}
   RubricSettings: {}
-  Term: {}
+  Term:
+    properties:
+      Id:
+        type: TermIdentifier
+        dto: string
+        from: From
+        nullable: false
+        nullValue: TermIdentifier.None
   TurnitinSettings: {}
   User:
     properties:
@@ -184,4 +194,22 @@
         dto: string
 typeAliases:
   UserNullable: User
-
+identifiers:
+  AccountIdentifier:
+    type: string
+    values:
+      Default: default
+      Self: self
+      SiteAdmin: site_admin
+  AssignmentGroupIdentifier:
+    type: string
+  AssignmentIdentifier:
+    type: string
+  CourseIdentifier:
+    type: string
+  RoleIdentifier:
+    type: string
+  TermIdentifier:
+    type: string
+  UserIdentifier:
+    type: string

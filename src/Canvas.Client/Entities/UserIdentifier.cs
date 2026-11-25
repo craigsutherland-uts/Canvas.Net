@@ -1,4 +1,6 @@
-﻿using Vogen;
+﻿using System.Globalization;
+
+using Vogen;
 
 namespace Canvas.Client.Entities;
 
@@ -17,6 +19,13 @@ public readonly partial struct UserIdentifier
     /// The self identifier.
     /// </summary>
     public static readonly UserIdentifier Self = From("self");
+
+    /// <summary>
+    /// Generate a new <see cref="UserIdentifier"/> from a user ID.
+    /// </summary>
+    /// <param name="userId">The user ID.</param>
+    /// <returns>The new <see cref="UserIdentifier"/> instance.</returns>
+    public static UserIdentifier From(int userId) => From(userId.ToString(CultureInfo.InvariantCulture));
 
     /// <summary>
     /// Determines whether one <see cref="UserIdentifier"/> has an earlier value than another 

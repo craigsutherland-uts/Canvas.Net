@@ -154,7 +154,7 @@ public sealed partial record Course
     /// <example>
     /// 25
     /// </example>
-    public int? GradingStandardId { get; init; }
+    public  string ? GradingStandardId { get; init; }
     /// <summary>
     /// 
     /// </summary> 

@@ -9,7 +9,7 @@
 /// <param name="url">The URL called.</param>
 /// <param name="innerException">An inner <see cref="Exception"/> instance.</param>
 public class RateLimitException(string url, Exception? innerException)
-        : ConnectionException(url, "This operation is fobidden due to exceeding the API rate limit.", innerException)
+        : ConnectionException(url, Errors.RateLimitException, innerException)
 {
     /// <summary>
     /// Initialise a new <see cref="RateLimitException"/> instance.

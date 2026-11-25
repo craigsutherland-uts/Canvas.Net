@@ -67,7 +67,7 @@ internal sealed partial record CourseDto
     public IList<GradingPeriodDto>? GradingPeriods { get; init; }
 
     [JsonPropertyName("grading_standard_id")]
-    public int? GradingStandardId { get; init; }
+    public  string ? GradingStandardId { get; init; }
 
     [JsonPropertyName("hide_final_grades")]
     public bool? HideFinalGrades { get; init; }

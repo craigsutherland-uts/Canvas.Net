@@ -76,6 +76,16 @@ public sealed class Engine
                     cancellationToken)
                 .ConfigureAwait(false);
         }
+
+        // Generate each identifier
+        foreach (var identifier in _api.Identifiers)
+        {
+            await GenerateIdentifier(
+                    Path.Combine(fullPath, "Entities"),
+                    identifier,
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
     }
 
     private void EnsureFolderExists(string fullPath)
@@ -148,7 +158,7 @@ public sealed class Engine
                 .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken)),
             "Entities");
 
-        // Save the completed entity
+        // Save the completed code
         var outputPath = Path.Combine(rootPath, className + ".cs");
         var streamWriter = new StreamWriter(outputPath, append: false);
         await using var _ = streamWriter.ConfigureAwait(false);
@@ -482,6 +492,39 @@ public sealed class Engine
                         defaultValue);
     }
 
+    private async Task GenerateIdentifier(
+        string rootPath,
+        KeyValuePair<string, IdentifierDefinition> identifier,
+        CancellationToken cancellationToken)
+    {
+        // Retrieve the class name
+        var className = identifier.Key;
+        Logger?.LogInformation("Generating Identifier {name}", className);
+
+        // Start the struct definition
+        var source = className[..^10].Humanize(LetterCasing.LowerCase);
+        var dtoDef = GenerateStructDefinition(className, $"An identifier for a {source}.", SyntaxKind.PublicKeyword);
+        var members = new List<MemberDeclarationSyntax>();
+
+        // Generate the compilation and add the usings, namespace, and record
+        var compilation = GenerateCompilationUnit(
+            dtoDef
+                .WithMembers(List(members))
+                .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken)),
+            "Entities");
+
+        // Save the completed code
+        var outputPath = Path.Combine(rootPath, className + ".cs");
+        var streamWriter = new StreamWriter(outputPath, append: false);
+        await using var _ = streamWriter.ConfigureAwait(false);
+        compilation
+            .NormalizeWhitespace()
+            .WriteTo(streamWriter);
+        Logger?.LogInformation("Identifier definition {className} saved to {path}", className, outputPath);
+        await streamWriter.FlushAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     private async Task GenerateDto(
         string rootPath,
         KeyValuePair<string, OpenApiSchema> component,
@@ -493,7 +536,7 @@ public sealed class Engine
         Logger?.LogInformation("Generating DTO {name}", className);
         var schema = component.Value;
 
-        // Start the record definitions
+        // Start the record definition
         var dtoDef = GenerateRecordDefinition(className, $"A DTO for transferring {component.Key.Humanize()} entities.", SyntaxKind.InternalKeyword);
 
         // Add each property
@@ -529,14 +572,14 @@ public sealed class Engine
                     IdentifierName("Json")),
                 IdentifierName("Serialization")));
 
-        // Save the completed entity
+        // Save the completed code
         var outputPath = Path.Combine(rootPath, className + ".cs");
         var streamWriter = new StreamWriter(outputPath, append: false);
         await using var _ = streamWriter.ConfigureAwait(false);
         compilation
             .NormalizeWhitespace()
             .WriteTo(streamWriter);
-        Logger?.LogInformation("Entity definition {className} saved to {path}", className, outputPath);
+        Logger?.LogInformation("DTO definition {className} saved to {path}", className, outputPath);
         await streamWriter.FlushAsync(cancellationToken)
             .ConfigureAwait(false);
     }
@@ -657,7 +700,7 @@ public sealed class Engine
     }
 
     private CompilationUnitSyntax GenerateCompilationUnit(
-        RecordDeclarationSyntax recordDef,
+        MemberDeclarationSyntax typeDefinition,
         string leafNamespace,
         params QualifiedNameSyntax[] namespacesToUse)
     {
@@ -671,7 +714,7 @@ public sealed class Engine
                             ParseName(RootNamespace),
                             IdentifierName(leafNamespace)))
                     .WithMembers(
-                        SingletonList<MemberDeclarationSyntax>(recordDef))));
+                        SingletonList(typeDefinition))));
     }
 
     private static RecordDeclarationSyntax GenerateRecordDefinition(
@@ -690,6 +733,25 @@ public sealed class Engine
                         accessLevel,
                         TriviaList()),
                     Token(SyntaxKind.SealedKeyword),
+                    Token(SyntaxKind.PartialKeyword)
+                ))
+            .WithOpenBraceToken(
+                Token(SyntaxKind.OpenBraceToken));
+    }
+
+    private static StructDeclarationSyntax GenerateStructDefinition(
+        string name,
+        string summary,
+        SyntaxKind accessLevel)
+    {
+        return StructDeclaration(name)
+            .WithModifiers(
+                TokenList(
+                    Token(
+                        TriviaList(GenerateXmlDoc("summary", summary, true)),
+                        accessLevel,
+                        TriviaList()),
+                    Token(SyntaxKind.ReadOnlyKeyword),
                     Token(SyntaxKind.PartialKeyword)
                 ))
             .WithOpenBraceToken(

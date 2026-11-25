@@ -80,7 +80,7 @@ public sealed class CanvasOptions
             .GetValues<TEnum>()
             .Where(f => !f.Equals(default(TEnum)))
             .ToArray();
-        foreach (var value in values)
+        foreach (var value in values.Order())
         {
             if (value.Equals(default(TEnum))) continue;
 

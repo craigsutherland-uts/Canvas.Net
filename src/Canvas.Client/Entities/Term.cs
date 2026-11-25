@@ -28,7 +28,7 @@ public sealed partial record Term
     /// <example>
     /// 1
     /// </example>
-    public int? Id { get; init; }
+    public TermIdentifier Id { get; init; }
     /// <summary>
     /// 
     /// </summary> 
@@ -51,7 +51,7 @@ public sealed partial record Term
         return new Term(client)
         {
             EndAt = dto.EndAt,
-            Id = dto.Id,
+            Id = dto.Id == null ? TermIdentifier.None : TermIdentifier.From(dto.Id),
             Name = dto.Name,
             StartAt = dto.StartAt,
             _source = dto,

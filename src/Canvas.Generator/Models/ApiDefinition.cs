@@ -12,6 +12,12 @@ public sealed class ApiDefinition
         = new Dictionary<string, EntityDefinition>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
+    /// The identifiers in the API.
+    /// </summary>
+    public IDictionary<string, IdentifierDefinition> Identifiers { get; }
+        = new Dictionary<string, IdentifierDefinition>(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
     /// Defines the namespaces for the target project.
     /// </summary>
     public NamespacesDefinition Namespaces { get; set; } = new();

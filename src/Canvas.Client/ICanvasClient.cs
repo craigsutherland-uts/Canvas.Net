@@ -1,6 +1,4 @@
-﻿using Canvas.Client.Interfaces;
-
-namespace Canvas.Client;
+﻿namespace Canvas.Client;
 
 /// <summary>
 /// A client that connects to a Canvas instance.

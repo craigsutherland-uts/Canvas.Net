@@ -1,5 +1,5 @@
 ﻿using Canvas.Client.Implementations;
-using Canvas.Client.Interfaces;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

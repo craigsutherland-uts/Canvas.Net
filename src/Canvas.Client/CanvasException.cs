@@ -6,8 +6,15 @@ namespace Canvas.Client;
 /// <summary>
 /// An exception from Canvas.
 /// </summary>
-public class CanvasException
-    : ConnectionException
+/// <remarks>
+/// Initialize a new <see cref="ConnectionException"/> instance.
+/// </remarks>
+/// <param name="url">The URL called.</param>
+/// <param name="message">The message.</param>
+/// <param name="errors">The <see cref="CanvasError"/> instances from Canvas.</param>
+/// <param name="innerException">An inner <see cref="Exception"/> instance.</param>
+public class CanvasException(string url, string? message, IEnumerable<CanvasError> errors, Exception? innerException)
+        : ConnectionException(url, message, innerException)
 {
     /// <summary>
     /// Initialize a new <see cref="ConnectionException"/> instance.
@@ -16,26 +23,12 @@ public class CanvasException
     /// <param name="message">The message.</param>
     /// <param name="errors">The <see cref="CanvasError"/> instances from Canvas.</param>
     public CanvasException(string url, string? message, IEnumerable<CanvasError> errors)
-        : base(url, message, innerException: null)
+        : this(url, message, errors, innerException: null)
     {
-        Errors = new ReadOnlyCollection<CanvasError>([.. errors]);
-    }
-
-    /// <summary>
-    /// Initialize a new <see cref="ConnectionException"/> instance.
-    /// </summary>
-    /// <param name="url">The URL called.</param>
-    /// <param name="message">The message.</param>
-    /// <param name="errors">The <see cref="CanvasError"/> instances from Canvas.</param>
-    /// <param name="innerException">An inner <see cref="Exception"/> instance.</param>
-    public CanvasException(string url, string? message, IEnumerable<CanvasError> errors, Exception? innerException)
-        : base(url, message, innerException)
-    {
-        Errors = new ReadOnlyCollection<CanvasError>([.. errors]);
     }
 
     /// <summary>
     /// The errors from Canvas.
     /// </summary>
-    public IReadOnlyCollection<CanvasError> Errors { get; }
+    public IReadOnlyCollection<CanvasError> Errors { get; } = new ReadOnlyCollection<CanvasError>([.. errors]);
 }
