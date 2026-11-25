@@ -13,6 +13,8 @@ public sealed partial record AssignmentDate
         Initialise();
     }
 
+    internal ICanvasClient Client => _client;
+
     partial void Initialise();
     /// <summary>
     /// A flag indicating whether the AssignmentDate is new or retrieved from Canvas.

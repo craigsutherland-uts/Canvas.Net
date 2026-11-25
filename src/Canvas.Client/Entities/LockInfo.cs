@@ -13,6 +13,8 @@ public sealed partial record LockInfo
         Initialise();
     }
 
+    internal ICanvasClient Client => _client;
+
     partial void Initialise();
     /// <summary>
     /// A flag indicating whether the LockInfo is new or retrieved from Canvas.

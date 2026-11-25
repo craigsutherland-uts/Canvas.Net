@@ -13,6 +13,8 @@ public sealed partial record CourseProgress
         Initialise();
     }
 
+    internal ICanvasClient Client => _client;
+
     partial void Initialise();
     /// <summary>
     /// A flag indicating whether the CourseProgress is new or retrieved from Canvas.

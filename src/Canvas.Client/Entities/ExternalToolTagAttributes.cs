@@ -13,6 +13,8 @@ public sealed partial record ExternalToolTagAttributes
         Initialise();
     }
 
+    internal ICanvasClient Client => _client;
+
     partial void Initialise();
     /// <summary>
     /// A flag indicating whether the ExternalToolTagAttributes is new or retrieved from Canvas.

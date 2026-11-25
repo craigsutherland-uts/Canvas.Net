@@ -13,6 +13,8 @@ public sealed partial record CalendarLink
         Initialise();
     }
 
+    internal ICanvasClient Client => _client;
+
     partial void Initialise();
     /// <summary>
     /// A flag indicating whether the CalendarLink is new or retrieved from Canvas.

@@ -13,6 +13,8 @@ public sealed partial record Enrollment
         Initialise();
     }
 
+    internal ICanvasClient Client => _client;
+
     partial void Initialise();
     /// <summary>
     /// A flag indicating whether the Enrollment is new or retrieved from Canvas.

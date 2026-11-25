@@ -114,14 +114,23 @@ public sealed class Engine
         // Add the constructor
         var members = new List<MemberDeclarationSyntax>
         {
-            GenerateField(IdentifierName($"{className}Dto"), "_source", false, true),
+            GenerateField(IdentifierName($"{className}Dto"), "_source", isReadOnly: false, isNullable: true),
         };
 
         if (apiDefinition.Client)
         {
             members.AddRange(
-                GenerateField(IdentifierName("ICanvasClient"), "_client", true, false),
+                GenerateField(IdentifierName("ICanvasClient"), "_client", isReadOnly: true, isNullable: false),
                 GenerateConstructor(className, "ICanvasClient"),
+                PropertyDeclaration(
+                        IdentifierName("ICanvasClient"),
+                        Identifier("Client"))
+                    .WithModifiers(
+                        TokenList(Token(SyntaxKind.InternalKeyword)))
+                    .WithExpressionBody(
+                        ArrowExpressionClause(IdentifierName("_client")))
+                    .WithSemicolonToken(
+                        Token(SyntaxKind.SemicolonToken)),
                 MethodDeclaration(
                         PredefinedType(Token(SyntaxKind.VoidKeyword)),
                         Identifier("Initialise"))

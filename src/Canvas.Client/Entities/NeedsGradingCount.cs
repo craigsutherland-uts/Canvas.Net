@@ -13,6 +13,8 @@ public sealed partial record NeedsGradingCount
         Initialise();
     }
 
+    internal ICanvasClient Client => _client;
+
     partial void Initialise();
     /// <summary>
     /// A flag indicating whether the NeedsGradingCount is new or retrieved from Canvas.

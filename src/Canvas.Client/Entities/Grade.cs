@@ -13,6 +13,8 @@ public sealed partial record Grade
         Initialise();
     }
 
+    internal ICanvasClient Client => _client;
+
     partial void Initialise();
     /// <summary>
     /// A flag indicating whether the Grade is new or retrieved from Canvas.

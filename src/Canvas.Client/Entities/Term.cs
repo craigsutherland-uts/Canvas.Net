@@ -13,6 +13,8 @@ public sealed partial record Term
         Initialise();
     }
 
+    internal ICanvasClient Client => _client;
+
     partial void Initialise();
     /// <summary>
     /// A flag indicating whether the Term is new or retrieved from Canvas.

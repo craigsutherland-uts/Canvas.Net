@@ -50,7 +50,7 @@ public sealed class HttpConnection
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(HeaderJsonMediaType));
         _httpClient.DefaultRequestHeaders.UserAgent.Clear();
 
-        // Add a user agent (now required by the Canvas API)
+        // Add a user agent (required by the Canvas API)
         var version = typeof(HttpConnection).Assembly?.GetName()?.Version?.ToString(2) ?? "2.0";
         _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Canvas.Net.Client", version));
     }
