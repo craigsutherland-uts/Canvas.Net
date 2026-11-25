@@ -123,6 +123,9 @@
   <data name="RateLimitException" xml:space="preserve">
     <value>This operation is forbidden due to exceeding the API rate limit - please wait and try again later.</value>
   </data>
+  <data name="UnableToRefreshEntityError" xml:space="preserve">
+    <value>Unable to refresh {0}: Canvas returned a not found result</value>
+  </data>
   <data name="UnauthorizedException" xml:space="preserve">
     <value>The connection has not been authorised - please check that the API token is valid.</value>
   </data>

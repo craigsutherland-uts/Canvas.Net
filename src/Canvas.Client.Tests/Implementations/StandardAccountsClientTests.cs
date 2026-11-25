@@ -29,6 +29,7 @@ public class StandardAccountsClientTests
         result.ShouldSatisfyAllConditions(
             r => r.ShouldNotBeNull(),
             r => r.Client.ShouldBe(client),
+            r => r.IsNew.ShouldBeTrue(),
             r => r.Id.ShouldBe(AccountIdentifier.None));
     }
 
@@ -54,7 +55,8 @@ public class StandardAccountsClientTests
         // Assert
         result.ShouldNotBeNull();
         result.ShouldSatisfyAllConditions(
-            r => r.Id.ShouldBe(identifier));
+            r => r.Id.ShouldBe(identifier),
+            r => r.IsNew.ShouldBeFalse());
         factory.MessageHandler.ValidateCalls();
     }
 

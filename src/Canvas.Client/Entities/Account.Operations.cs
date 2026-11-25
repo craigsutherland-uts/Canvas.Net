@@ -20,7 +20,8 @@ public partial record Account
                 .Accounts
                 .Retrieve(Id, cancellationToken)
                 .ConfigureAwait(false)
-            ?? throw new CanvasClientException("Unable to refresh account: Canvas returned a not found result");
+            ?? throw new CanvasClientException(
+                string.Format(Errors.UnableToRefreshEntityError, "account"));
         return refreshed;
     }
 }

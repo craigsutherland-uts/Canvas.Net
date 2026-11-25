@@ -15,7 +15,7 @@ public sealed class TestClientFactory
 
     public FakeHttpMessageHandler MessageHandler { get; } = new();
 
-    public ICanvasClient Get()
+    public IInternalCanvasClient Get()
     {
         var services = new ServiceCollection();
         services.AddLogging();

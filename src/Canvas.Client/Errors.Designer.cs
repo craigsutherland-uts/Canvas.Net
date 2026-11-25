@@ -79,6 +79,15 @@ namespace Canvas.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to refresh {0}: Canvas returned a not found result.
+        /// </summary>
+        internal static string UnableToRefreshEntityError {
+            get {
+                return ResourceManager.GetString("UnableToRefreshEntityError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The connection has not been authorised - please check that the API token is valid..
         /// </summary>
         internal static string UnauthorizedException {

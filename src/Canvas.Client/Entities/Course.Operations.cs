@@ -55,7 +55,8 @@ public partial record Course
                 .Courses
                 .Retrieve(Id, cancellationToken)
                 .ConfigureAwait(false)
-            ?? throw new CanvasClientException("Unable to refresh course: Canvas returned a not found result");
+            ?? throw new CanvasClientException(
+                string.Format(Errors.UnableToRefreshEntityError, "course")); 
         return refreshed;
     }
 }

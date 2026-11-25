@@ -20,7 +20,8 @@ public partial record User
                 .Users
                 .Retrieve(Id, cancellationToken)
                 .ConfigureAwait(false)
-            ?? throw new CanvasClientException("Unable to refresh user: Canvas returned a not found result");
+            ?? throw new CanvasClientException(
+                string.Format(Errors.UnableToRefreshEntityError, "user"));
         return refreshed;
     }
 }
