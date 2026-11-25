@@ -8,6 +8,20 @@ namespace Canvas.Client.Interfaces;
 public interface ICourses
 {
     /// <summary>
+    /// Retrieves an <see cref="IAssignmentGroups"/> for a course.
+    /// </summary>
+    /// <param name="courseIdentifier">The identifier of the course.</param>
+    /// <returns>The <see cref="IAssignmentGroups"/> instance.</returns>
+    IAssignmentGroups AssignmentGroups(CourseIdentifier courseIdentifier);
+
+    /// <summary>
+    /// Retrieves an <see cref="IAssignments"/> for a course.
+    /// </summary>
+    /// <param name="courseIdentifier">The identifier of the course.</param>
+    /// <returns>The <see cref="IAssignments"/> instance.</returns>
+    IAssignments Assignments(CourseIdentifier courseIdentifier);
+
+    /// <summary>
     /// Lists the courses for the user.
     /// </summary>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>

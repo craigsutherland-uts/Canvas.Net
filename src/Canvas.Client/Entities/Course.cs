@@ -5,8 +5,8 @@ namespace Canvas.Client.Entities;
 public sealed partial record Course
 {
     private CourseDto? _source;
-    private readonly ICanvasClient _client;
-    internal Course(ICanvasClient client)
+    private readonly IInternalCanvasClient _client;
+    internal Course(IInternalCanvasClient client)
     {
         Guard.IsNotNull(client);
         _client = client;
@@ -360,7 +360,7 @@ public sealed partial record Course
     /// </example>
     public string? WorkflowState { get; init; }
 
-    internal static Course? From(ICanvasClient client, CourseDto? dto)
+    internal static Course? From(IInternalCanvasClient client, CourseDto? dto)
     {
         if (dto == null)
             return null;
@@ -424,7 +424,7 @@ public sealed partial record Course
         };
     }
 
-    internal static IList<Course> From(ICanvasClient client, IEnumerable<CourseDto>? dto)
+    internal static IList<Course> From(IInternalCanvasClient client, IEnumerable<CourseDto>? dto)
     {
         if (dto == null)
             return[];

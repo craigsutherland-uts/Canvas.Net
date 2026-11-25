@@ -6,8 +6,6 @@ using Canvas.Client.Entities;
 using Canvas.Client.Implementations;
 using Canvas.Client.Tests.Helpers;
 
-using Microsoft.Extensions.Logging;
-
 namespace Canvas.Client.Tests.Implementations;
 
 /// <summary>
@@ -19,16 +17,13 @@ public class StandardAccountsClientTests
     public void NewRetrievesANewEntity()
     {
         // Arrange
-        var client = A.Fake<ICanvasClient>();
-        var connection = A.Fake<ICanvasConnection>();
-        var logger = A.Fake<ILogger<StandardAccountsClient>>();
-        var accountsClient = new StandardAccountsClient(
-            client,
-            connection,
-            logger);
+        var factory = new TestClientFactory();
+        var client = factory.Get();
 
         // Act
-        var result = accountsClient.New();
+        var result = client
+            .Accounts
+            .New();
 
         // Assert
         result.ShouldSatisfyAllConditions(

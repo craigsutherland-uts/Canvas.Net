@@ -9,20 +9,22 @@ namespace Canvas.Client.Entities;
 [DebuggerDisplay($"{{{nameof(Name)}}} [{{{nameof(Id)}.ToString()}}]")]
 public partial record Course
 {
-    private Lazy<IAssignments> _assignments = new();
-    private Lazy<IAssignmentGroups> _assignmentGroups = new();
+#pragma warning disable IDE0044 // Add readonly modifier
+    private Lazy<IAssignments> _assignments = null!;
+    private Lazy<IAssignmentGroups> _assignmentGroups = null!;
+#pragma warning restore IDE0044 // Add readonly modifier
 
     partial void Initialise()
     {
         _assignments = new(() =>
         {
-            var client = ((StandardClient)_client).Services.GetRequiredService<IAssignments>();
-            client.CourseIdentifier = Id;
+            var client = _client.Services.GetRequiredService<IAssignments>();
+            ((StandardAssignmentsClient)client).CourseIdentifier = Id;
             return client;
         });
         _assignmentGroups = new(() =>
         {
-            var client = ((StandardClient)_client).Services.GetRequiredService<IAssignmentGroups>();
+            var client = _client.Services.GetRequiredService<IAssignmentGroups>();
             client.CourseIdentifier = Id;
             return client;
         });

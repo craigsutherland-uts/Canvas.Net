@@ -1,4 +1,5 @@
 ﻿using Canvas.Client.Implementations;
+using Canvas.Client.Internal;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -27,7 +28,7 @@ public sealed class TestClientFactory
                 "1234",
                 sp.GetRequiredService<HttpClient>(),
                 sp.GetRequiredService<ILogger<HttpConnection>>()))
-            .AddSingleton<ICanvasClient, StandardClient>();
+            .AddSingleton<IInternalCanvasClient, StandardClient>();
 
         // Add the registered clients
         foreach (var (service, implementation) in _canvasClients.Value)
@@ -38,7 +39,7 @@ public sealed class TestClientFactory
         // Generate the root client and return it
         var client = services
             .BuildServiceProvider()
-            .GetRequiredService<ICanvasClient>();
+            .GetRequiredService<IInternalCanvasClient>();
         return client;
     }
 

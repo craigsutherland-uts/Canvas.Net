@@ -16,11 +16,6 @@ public readonly partial struct UserIdentifier
     public static readonly UserIdentifier None = new(string.Empty);
 
     /// <summary>
-    /// The self identifier.
-    /// </summary>
-    public static readonly UserIdentifier Self = From("self");
-
-    /// <summary>
     /// Generate a new <see cref="UserIdentifier"/> from a user ID.
     /// </summary>
     /// <param name="userId">The user ID.</param>

@@ -10,7 +10,7 @@ namespace Canvas.Client.Implementations;
 /// </remarks>
 /// <param name="services">The underlying <see cref="IServiceProvider"/> instance.</param>
 public sealed class StandardClient(IServiceProvider services)
-        : ICanvasClient
+        : IInternalCanvasClient
 {
     private readonly Lazy<IAccounts> _accounts = new(services.GetRequiredService<IAccounts>);
     private readonly Lazy<ICourses> _courses = new(services.GetRequiredService<ICourses>);
@@ -31,5 +31,8 @@ public sealed class StandardClient(IServiceProvider services)
     /// </summary>
     public IUsers Users => _users.Value;
 
-    internal IServiceProvider Services => services;
+    /// <summary>
+    /// Expose the underlying <see cref="IServiceProvider"/> instance.
+    /// </summary>
+    IServiceProvider IInternalCanvasClient.Services => services;
 }

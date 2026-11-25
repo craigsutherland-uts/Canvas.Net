@@ -6,8 +6,6 @@ using Canvas.Client.Entities;
 using Canvas.Client.Implementations;
 using Canvas.Client.Tests.Helpers;
 
-using Microsoft.Extensions.Logging;
-
 namespace Canvas.Client.Tests.Implementations;
 
 /// <summary>
@@ -16,19 +14,35 @@ namespace Canvas.Client.Tests.Implementations;
 public class StandardCoursesClientTests
 {
     [Fact]
+    public void AssignmentsReturnsAnIAssignmentsForACourse()
+    {
+        // Arrange
+        var factory = new TestClientFactory();
+        var client = factory.Get();
+        var identifier = CourseIdentifier.From("987654");
+
+        // Act
+        var result = client
+            .Courses
+            .Assignments(identifier);
+
+        // Assert
+        result.ShouldSatisfyAllConditions(
+            r => r.ShouldNotBeNull(),
+            r => r.CourseIdentifier.ShouldBe(identifier));
+    }
+
+    [Fact]
     public void NewRetrievesANewEntity()
     {
         // Arrange
-        var client = A.Fake<ICanvasClient>();
-        var connection = A.Fake<ICanvasConnection>();
-        var logger = A.Fake<ILogger<StandardCoursesClient>>();
-        var coursesClient = new StandardCoursesClient(
-            client,
-            connection,
-            logger);
+        var factory = new TestClientFactory();
+        var client = factory.Get();
 
         // Act
-        var result = coursesClient.New();
+        var result = client
+            .Courses
+            .New();
 
         // Assert
         result.ShouldSatisfyAllConditions(

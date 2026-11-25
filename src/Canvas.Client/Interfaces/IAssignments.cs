@@ -10,7 +10,7 @@ public interface IAssignments
     /// <summary>
     /// The identifier of the associated course.
     /// </summary>
-    CourseIdentifier? CourseIdentifier { get; set; }
+    CourseIdentifier? CourseIdentifier { get; }
 
     /// <summary>
     /// Lists the assignments for the associated course.

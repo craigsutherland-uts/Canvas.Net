@@ -13,7 +13,7 @@ namespace Canvas.Client.Implementations;
 /// <param name="logger">A <see cref="ILogger"/> for logging any messages.</param>
 [CanvasClient<IAssignments>]
 public sealed class StandardAssignmentsClient(
-        ICanvasClient parent,
+        IInternalCanvasClient parent,
         ICanvasConnection connection,
         ILogger<StandardAssignmentsClient> logger)
     : IAssignments
@@ -21,7 +21,7 @@ public sealed class StandardAssignmentsClient(
     /// <summary>
     /// The identifier of the associated course.
     /// </summary>
-    public CourseIdentifier? CourseIdentifier { get; set; }
+    public CourseIdentifier? CourseIdentifier { get; internal set; }
 
     /// <summary>
     /// Lists the assignments for the associated course.
@@ -81,7 +81,9 @@ public sealed class StandardAssignmentsClient(
     private Assignment? ParseDto(AssignmentDto? dto)
     {
         var entity = Assignment.From(parent, dto);
-        if (entity != null && entity.CourseId == Entities.CourseIdentifier.None)
+        if (entity != null 
+            && (!entity.CourseId.IsInitialized()
+                || entity.CourseId == Entities.CourseIdentifier.None))
         {
             entity = entity with
             {

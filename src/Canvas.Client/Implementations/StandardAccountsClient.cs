@@ -15,7 +15,7 @@ namespace Canvas.Client.Implementations;
 /// <param name="logger">A <see cref="ILogger"/> for logging any messages.</param>
 [CanvasClient<IAccounts>]
 public sealed class StandardAccountsClient(
-        ICanvasClient parent,
+        IInternalCanvasClient parent,
         ICanvasConnection connection,
         ILogger<StandardAccountsClient> logger)
     : IAccounts

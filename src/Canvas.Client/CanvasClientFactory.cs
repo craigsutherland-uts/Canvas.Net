@@ -48,7 +48,8 @@ public sealed class CanvasClientFactory
                 apiKey,
                 sp.GetRequiredService<HttpClient>(),
                 sp.GetRequiredService<ILogger<HttpConnection>>()))
-            .AddSingleton<ICanvasClient, StandardClient>();
+            .AddSingleton<IInternalCanvasClient, StandardClient>()
+            .AddSingleton<ICanvasClient>(sp => sp.GetRequiredService<IInternalCanvasClient>());
 
         // Add the registered clients
         foreach (var (service, implementation) in _canvasClients.Value)

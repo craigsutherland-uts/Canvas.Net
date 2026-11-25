@@ -1,5 +1,6 @@
 ﻿using Canvas.Client.Entities;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using System.Globalization;
@@ -15,11 +16,36 @@ namespace Canvas.Client.Implementations;
 /// <param name="logger">A <see cref="ILogger"/> for logging any messages.</param>
 [CanvasClient<ICourses>]
 public sealed class StandardCoursesClient(
-        ICanvasClient parent,
+        IInternalCanvasClient parent,
         ICanvasConnection connection,
         ILogger<StandardCoursesClient> logger)
     : ICourses
 {
+    /// <summary>
+    /// Retrieves an <see cref="IAssignmentGroups"/> for a course.
+    /// </summary>
+    /// <param name="courseIdentifier">The identifier of the course.</param>
+    /// <returns>The <see cref="IAssignmentGroups"/> instance.</returns>
+    public IAssignmentGroups AssignmentGroups(CourseIdentifier courseIdentifier)
+    {
+        var client = parent.Services.GetRequiredService<IAssignmentGroups>();
+        ((StandardAssignmentGroupsClient)client).CourseIdentifier = courseIdentifier;
+        return client;
+    }
+
+
+    /// <summary>
+    /// Retrieves an <see cref="IAssignments"/> for a course.
+    /// </summary>
+    /// <param name="courseIdentifier">The identifier of the course.</param>
+    /// <returns>The <see cref="IAssignments"/> instance.</returns>
+    public IAssignments Assignments(CourseIdentifier courseIdentifier)
+    {
+        var client = parent.Services.GetRequiredService<IAssignments>();
+        ((StandardAssignmentsClient)client).CourseIdentifier = courseIdentifier;
+        return client;
+    }
+
     /// <summary>
     /// Lists the courses for the user.
     /// </summary>
@@ -30,6 +56,7 @@ public sealed class StandardCoursesClient(
     {
         return List(CanvasOptions.New(), cancellationToken);
     }
+
     /// <summary>
     /// Lists the courses for the user.
     /// </summary>

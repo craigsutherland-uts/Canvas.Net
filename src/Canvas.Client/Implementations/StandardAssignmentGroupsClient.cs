@@ -15,7 +15,7 @@ namespace Canvas.Client.Implementations;
 /// <param name="logger">A <see cref="ILogger"/> for logging any messages.</param>
 [CanvasClient<IAssignmentGroups>]
 public sealed class StandardAssignmentGroupsClient(
-        ICanvasClient parent,
+        IInternalCanvasClient parent,
         ICanvasConnection connection,
         ILogger<StandardAssignmentGroupsClient> logger)
     : IAssignmentGroups
@@ -83,7 +83,9 @@ public sealed class StandardAssignmentGroupsClient(
     private AssignmentGroup? ParseDto(AssignmentGroupDto? dto)
     {
         var entity = AssignmentGroup.From(parent, dto);
-        if (entity != null && entity.CourseId == Entities.CourseIdentifier.None)
+        if (entity != null 
+            && (!entity.CourseId.IsInitialized()
+                || entity.CourseId == Entities.CourseIdentifier.None))
         {
             entity = entity with
             {
